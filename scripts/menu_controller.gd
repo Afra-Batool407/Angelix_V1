@@ -537,3 +537,10 @@ func _make_card(entry: Dictionary) -> Button:
 	if not Engine.is_editor_hint():
 		card.pressed.connect(_on_card_pressed.bind(String(entry["id"])))
 	return card
+
+
+func _card_style(bg: Color, radius: int) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = bg
+	style.set_corner_radius_all(radius)
+	return style
