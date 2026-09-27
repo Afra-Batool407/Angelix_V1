@@ -27,18 +27,18 @@ const SUBJECTS := [
 ]
 
 const MATH_CHAPTERS := [
-	{"id": "math.u01", "title": "Unit 1", "subtitle": "Real Numbers", "enabled": false},
-	{"id": "math.u02", "title": "Unit 2", "subtitle": "Logarithms", "enabled": false},
-	{"id": "math.u03", "title": "Unit 3", "subtitle": "Sets and Functions", "enabled": false},
-	{"id": "math.u04", "title": "Unit 4", "subtitle": "Factorization and Algebraic Manipulation", "enabled": false},
-	{"id": "math.u05", "title": "Unit 5", "subtitle": "Linear Equations and Inequalities", "enabled": false},
-	{"id": "math.u06", "title": "Unit 6", "subtitle": "Trigonometry", "enabled": false},
-	{"id": "math.u07", "title": "Unit 7", "subtitle": "Coordinate Geometry", "enabled": false},
-	{"id": "math.u08", "title": "Unit 8", "subtitle": "Logic", "enabled": false},
-	{"id": "math.u09", "title": "Unit 9", "subtitle": "Similar Figures", "enabled": false},
-	{"id": "math.u10", "title": "Unit 10", "subtitle": "Graphs of Functions", "enabled": false},
-	{"id": "math.u11", "title": "Unit 11", "subtitle": "Loci and Construction", "enabled": false},
-	{"id": "math.u12", "title": "Unit 12", "subtitle": "Information Handling", "enabled": false},
+	{"id": "math.u01", "title": "Unit 1", "subtitle": "Real Numbers", "enabled": true},
+	{"id": "math.u02", "title": "Unit 2", "subtitle": "Logarithms", "enabled": true},
+	{"id": "math.u03", "title": "Unit 3", "subtitle": "Sets and Functions", "enabled": true},
+	{"id": "math.u04", "title": "Unit 4", "subtitle": "Factorization and Algebraic Manipulation", "enabled": true},
+	{"id": "math.u05", "title": "Unit 5", "subtitle": "Linear Equations and Inequalities", "enabled": true},
+	{"id": "math.u06", "title": "Unit 6", "subtitle": "Trigonometry", "enabled": true},
+	{"id": "math.u07", "title": "Unit 7", "subtitle": "Coordinate Geometry", "enabled": true},
+	{"id": "math.u08", "title": "Unit 8", "subtitle": "Logic", "enabled": true},
+	{"id": "math.u09", "title": "Unit 9", "subtitle": "Similar Figures", "enabled": true},
+	{"id": "math.u10", "title": "Unit 10", "subtitle": "Graphs of Functions", "enabled": true},
+	{"id": "math.u11", "title": "Unit 11", "subtitle": "Loci and Construction", "enabled": true},
+	{"id": "math.u12", "title": "Unit 12", "subtitle": "Information Handling", "enabled": true},
 	{"id": "math.u13", "title": "Unit 13", "subtitle": "Probability", "enabled": true},
 ]
 
