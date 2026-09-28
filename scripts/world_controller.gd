@@ -32,6 +32,9 @@ const LESSON_OVERLAY_GROUP := "lesson_overlay"
 @onready var _right_btn: Button = $HUD/ActivityPanel/HBox/RightButton
 @onready var _lesson_btn: Button = $HUD/ActivityPanel/HBox/LessonButton
 @onready var _activity_done: Label = $HUD/ActivityDoneLabel
+@onready var _sun: DirectionalLight3D = $Sun
+@onready var _world_env: WorldEnvironment = $WorldEnvironment
+@onready var _day_night: DayNightCycle = $DayNight
 
 ## "explore" = free 3D world; "station" = spawned for a topic near its
 ## station with the in-world activity active (Phase 2).
@@ -51,7 +54,21 @@ func _ready() -> void:
 	_setup_companion()
 	_setup_overlay()
 	_setup_hud()
+	_setup_day_night()
 	_apply_topic_selection()
+
+
+## Starts the cheap day/night cycle, or disables it (and shadows) in
+## Performance Mode. Never touches lesson or station logic.
+func _setup_day_night() -> void:
+	if GameSession.performance_mode:
+		_day_night.stop()
+		_sun.shadow_enabled = false
+		_sun.light_energy = 1.1
+		_sun.light_color = Color(1.0, 0.97, 0.9)
+	else:
+		_day_night.setup(_sun, _world_env.environment)
+		_day_night.start()
 
 
 ## Applies the menu's selected topic: when it belongs to the Real Numbers

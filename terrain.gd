@@ -11,7 +11,9 @@ extends StaticBody3D
 ## height blends to spot.y within flat_radius of each spot (x,z).
 @export var flat_spots: Array[Vector3] = [
 	Vector3(0, 1.5, 8),      # hub entrance / spawn
-	Vector3(8, 1.5, 2),      # Real Numbers station
+	Vector3(8, 1.5, 2),      # Real Numbers station (Math Meadows)
+	Vector3(-16, 1.5, -12),  # Science Springs zone
+	Vector3(14, 1.5, -14),   # Language Lagoon zone
 ]
 @export var flat_radius := 7.0
 
@@ -35,6 +37,16 @@ func _blended_height(noise: FastNoiseLite, x: float, z: float) -> float:
 			var t := smoothstep(0.0, 1.0, d / flat_radius)
 			h = lerp(spot.y, h, t)
 	return h
+
+
+## Public ground-height query (matches the rendered mesh, including flat
+## spots). Used by object placement and safe position restoration.
+func get_ground_height(x: float, z: float) -> float:
+	var noise := FastNoiseLite.new()
+	noise.seed = noise_seed
+	noise.frequency = noise_frequency
+	noise.fractal_octaves = 4
+	return _blended_height(noise, x, z)
 
 
 func _build_terrain_mesh(noise: FastNoiseLite) -> ArrayMesh:

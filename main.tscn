@@ -1,10 +1,12 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://terrain.gd" id="1_terrain"]
 [ext_resource type="PackedScene" path="res://scenes/angel.tscn" id="2_angel"]
 [ext_resource type="PackedScene" path="res://scenes/touch_joystick.tscn" id="3_joy"]
 [ext_resource type="Script" path="res://scripts/follow_camera.gd" id="4_cam"]
 [ext_resource type="PackedScene" path="res://scenes/learning_station.tscn" id="5_station"]
+[ext_resource type="Script" path="res://scripts/town_builder.gd" id="6_builder"]
+[ext_resource type="Script" path="res://scripts/day_night_cycle.gd" id="7_daynight"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
 albedo_color = Color(0.32, 0.52, 0.3, 1)
@@ -46,6 +48,12 @@ position = Vector3(0, 6, 8)
 [node name="StationRealNumbers" parent="." instance=ExtResource("5_station")]
 position = Vector3(8, 1.5, 2)
 groups=["learning_station"]
+
+[node name="TownBuilder" type="Node3D" parent="."]
+script = ExtResource("6_builder")
+
+[node name="DayNight" type="Node" parent="."]
+script = ExtResource("7_daynight")
 
 [node name="CameraRig" type="Node3D" parent="."]
 position = Vector3(0, 6, 8)

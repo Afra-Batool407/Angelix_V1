@@ -430,3 +430,48 @@ if FAILURES:
     for f in FAILURES:
         print("FAIL ->", f)
     sys.exit(1)
+
+# ============================================================
+# Phase 3 checks (AngelTown zones)
+# ============================================================
+def _p3(name, ok, detail=""):
+    check(name, ok, detail)
+
+tb = (ROOT / "scripts/town_builder.gd").read_text(encoding="utf-8")
+for zone in ["Math Meadows", "Science Springs", "Language Lagoon"]:
+    _p3(f"zone '{zone}' defined", zone in tb)
+_p3("fountain built", "FountainOfKnowledge" in tb)
+_p3("paths connect hub to zones", "_build_paths" in tb and "lerp(b, t)" in tb)
+_p3("scatter keep-clear (paths/hub/zones)", "_blocks_gameplay" in tb and "keep_clear" in tb)
+_p3("locked future stations honest",
+    tb.count('"Coming soon"') == 2 and 'available = false' in tb and 'st.topic_id = ""' in tb)
+_p3("zone signs readable", "_build_zone_signs" in tb)
+_p3("fountain/path follow terrain", "_terrain_y(FOUNTAIN_POS" in tb and "_terrain_y(p.x, p.y)" in tb)
+
+ts = (ROOT / "scripts/town_scatter.gd").read_text(encoding="utf-8")
+_p3("scatter deterministic seed", "SEED := 20260928" in ts)
+_p3("scatter uses MultiMesh", "MultiMeshInstance3D" in ts and "TRANSFORM_3D" in ts)
+_p3("scatter safe without providers", "push_error" in ts and "return" in ts)
+
+dn = (ROOT / "scripts/day_night_cycle.gd").read_text(encoding="utf-8")
+_p3("day/night: stoppable", "func stop()" in dn and "func start()" in dn)
+_p3("day/night: no shadow toggling per frame", dn.count("shadow_enabled") == 0)
+_p3("day/night: slow period", "DAY_LENGTH_SEC := 240.0" in dn)
+
+tr = (ROOT / "terrain.gd").read_text(encoding="utf-8")
+_p3("terrain: ground query public", "func get_ground_height" in tr)
+_p3("terrain: 4 flat spots (hub + 3 zones)", tr.count("Vector3(") >= 4 and "-16, 1.5, -12" in tr and "14, 1.5, -14" in tr)
+
+mn3 = (ROOT / "main.tscn").read_text(encoding="utf-8")
+_p3("main.tscn: TownBuilder instanced", "town_builder.gd" in mn3)
+_p3("main.tscn: DayNight instanced", "day_night_cycle.gd" in mn3)
+wc3 = (ROOT / "scripts/world_controller.gd").read_text(encoding="utf-8")
+_p3("world: performance mode disables day/night", "if GameSession.performance_mode:" in wc3 and "_day_night.stop()" in wc3)
+_p3("world: perf mode kills shadows", "_sun.shadow_enabled = false" in wc3)
+
+print()
+print(f"TOTAL: {len(CHECKS)} checks, {len(FAILURES)} failed")
+if FAILURES:
+    for f in FAILURES:
+        print("FAIL ->", f)
+    sys.exit(1)

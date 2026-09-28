@@ -11,6 +11,11 @@ const CONTENT_DIR := "res://content/topics"
 ## without a selection, e.g. direct scene run).
 var selected_topic_id := ""
 
+## Performance Mode (persisted in Phase 4's settings store): disables the
+## day/night cycle, shadows and optional decorations. Lesson and station
+## interactions are never affected.
+var performance_mode := false
+
 
 ## Stable content path for a topic ID (file may not exist).
 func content_path_for(topic_id: String) -> String:
