@@ -475,3 +475,82 @@ if FAILURES:
     for f in FAILURES:
         print("FAIL ->", f)
     sys.exit(1)
+
+# ============================================================
+# Phase 4 checks (progression, navigation, polish)
+# ============================================================
+def _p4(name, ok, detail=""):
+    check(name, ok, detail)
+
+lp4 = (ROOT / "scripts/learning_progress.gd").read_text(encoding="utf-8")
+_p4("progress: schema v2", "SCHEMA_VERSION := 2" in lp4)
+_p4("progress: xp fields sanitized",
+    '"xp": maxi(0, int(entry.get("xp", 0)))' in lp4
+    and '"first_completion_rewarded"' in lp4 and '"mastery_rewarded"' in lp4)
+_p4("progress: first-completion gated by flag",
+    "if not was_rewarded:" in lp4 and 'entry["first_completion_rewarded"] = true' in lp4)
+_p4("progress: mastery bonus gated by flag",
+    'not bool(entry["mastery_rewarded"])' in lp4)
+_p4("progress: totals exposed", "func get_total_xp" in lp4 and "func get_total_stars" in lp4)
+
+ts4 = (ROOT / "scripts/town_settings.gd").read_text(encoding="utf-8")
+_p4("settings: versioned + perf flag", "SCHEMA_VERSION := 2" in ts4 and "performance_mode" in ts4)
+_p4("settings: position validation (bounds/nan/inf/y)",
+    "is_nan" in ts4 and "is_inf" in ts4 and "BOUNDS_X" in ts4 and "MAX_Y" in ts4)
+_p4("settings: newer file refused safely", "if ver > SCHEMA_VERSION:" in ts4)
+_p4("settings: atomic save", ".tmp" in ts4 and "rename" in ts4)
+_p4("settings: clear position helper", "func clear_player_position" in ts4)
+
+wc4 = (ROOT / "scripts/world_controller.gd").read_text(encoding="utf-8")
+_p4("world: loads settings + progress", "_settings.load_settings()" in wc4 and "_progress.load_progress()" in wc4)
+_p4("world: restores validated position",
+    "TownSettings.is_valid_position(_settings.player_position)" in wc4)
+_p4("world: topic spawn still works (no position save)",
+    'GameSession.matches_station(selected, st.topic_id)' in wc4)
+_p4("world: saves position periodically", "_save_player_position()" in wc4 and "_save_accum >= 5.0" in wc4)
+_p4("world: saves position on exit to menu",
+    wc4.find("_save_player_position()\n\tget_tree().change_scene_to_file(MENU_SCENE)") != -1)
+_p4("world: XP HUD updates on lesson close",
+    wc4.find("func _close_lesson") < wc4.find("_update_xp_hud()") and
+    "_progress.load_progress()\n\t_xp_label.text" in wc4)
+_p4("world: angel mood on quiz outcome", "_angel.set_mood(" in wc4)
+_p4("world: pause wired (button + back + menu)",
+    "_pause_btn.pressed.connect(_open_pause)" in wc4
+    and "_pause_menu.is_open()" in wc4
+    and "_menu_button.pressed.connect(_open_pause)" in wc4)
+_p4("world: perf mode toggles scatter", "_set_scatter_visible" in wc4)
+_p4("world: compass updated at 5 Hz", "_compass_accum >= 0.2" in wc4)
+_p4("world: compass targets carry availability", '"available": true' in wc4 and '"available": false' in wc4)
+
+cp = (ROOT / "scripts/town_compass.gd").read_text(encoding="utf-8")
+_p4("compass: prefers available stations", "best_available" in cp)
+_p4("compass: pure drawing (no minimap cost)", "queue_redraw" in cp and "SubViewport" not in cp)
+
+pm = (ROOT / "scripts/pause_menu.gd").read_text(encoding="utf-8")
+_p4("pause: works while tree paused", "PROCESS_MODE_WHEN_PAUSED" in pm)
+_p4("pause: apply_performance callable", "apply_performance" in pm)
+_p4("pause: confirm before leaving", "ConfirmationDialog" in pm or "_confirm" in pm)
+_p4("pause: back closes first", "NOTIFICATION_WM_GO_BACK_REQUEST" in pm)
+
+pmt = (ROOT / "scenes/pause_menu.tscn").read_text(encoding="utf-8")
+pm_ext = pmt.count("[ext_resource ")
+pm_subs = pmt.count("[sub_resource ")
+pm_steps = int(re.search(r"load_steps=(\d+)", pmt).group(1))
+_p4("pause_menu.tscn load_steps consistent", pm_steps == pm_ext + pm_subs + 1)
+
+mn4 = (ROOT / "main.tscn").read_text(encoding="utf-8")
+_p4("main.tscn: PauseMenu instanced", 'instance=ExtResource("8_pause")' in mn4)
+_p4("main.tscn: Compass/XPBar/PauseButton present",
+    all(n in mn4 for n in ['name="Compass"', 'name="XPBar"', 'name="PauseButton"']))
+ls4 = (ROOT / "scripts/lesson.gd").read_text(encoding="utf-8")
+_p4("lesson: XP earned shown on result", "+%d XP" in ls4)
+
+qo = (ROOT / "scripts/quiz_orb.gd").read_text(encoding="utf-8")
+_p4("orb floats above line", "position.y = 0.9" in qo)
+
+print()
+print(f"TOTAL: {len(CHECKS)} checks, {len(FAILURES)} failed")
+if FAILURES:
+    for f in FAILURES:
+        print("FAIL ->", f)
+    sys.exit(1)

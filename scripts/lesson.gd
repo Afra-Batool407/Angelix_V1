@@ -487,10 +487,11 @@ func _render_result(score: int, total: int, entry: Dictionary) -> void:
 	_result_box.add_child(headline)
 
 	var detail := _muted_label(
-		"Attempts: %d   Best: %d/%d%s" % [
+		"Attempts: %d   Best: %d/%d%s   +%d XP" % [
 			int(entry.get("attempt_count", 0)),
 			int(entry.get("best_score", 0)), total,
-			"   MASTERED" if bool(entry.get("mastered", false)) else ""])
+			"   MASTERED" if bool(entry.get("mastered", false)) else "",
+			int(entry.get("xp_gained", 0))])
 	_result_box.add_child(detail)
 
 	# Per-question feedback with explanations (only after the quiz ends).

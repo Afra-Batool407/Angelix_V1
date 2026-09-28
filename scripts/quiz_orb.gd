@@ -24,6 +24,8 @@ func _ready() -> void:
 	monitoring = true
 	if value_to_x.is_valid():
 		position.x = value_to_x.call(value)
+	position.y = 0.9  # float above the line so the orb is not buried
+	set_floating_text(statement if statement != "" else "True or false?")
 	body_entered.connect(_on_body_entered)
 
 

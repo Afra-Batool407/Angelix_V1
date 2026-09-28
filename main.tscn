@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://terrain.gd" id="1_terrain"]
 [ext_resource type="PackedScene" path="res://scenes/angel.tscn" id="2_angel"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/learning_station.tscn" id="5_station"]
 [ext_resource type="Script" path="res://scripts/town_builder.gd" id="6_builder"]
 [ext_resource type="Script" path="res://scripts/day_night_cycle.gd" id="7_daynight"]
+[ext_resource type="PackedScene" path="res://scenes/pause_menu.tscn" id="8_pause"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
 albedo_color = Color(0.32, 0.52, 0.3, 1)
@@ -179,6 +180,44 @@ text = "Activity complete!"
 horizontal_alignment = 1
 visible = false
 
+[node name="Compass" type="Control" parent="HUD"]
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -118.0
+offset_top = 70.0
+offset_right = -18.0
+offset_bottom = 170.0
+grow_horizontal = 0
+
+[node name="XPBar" type="Label" parent="HUD"]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 14.0
+offset_top = 12.0
+offset_right = 240.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(0.95, 0.96, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 16
+text = "XP 0  |  Stars 0"
+
+[node name="PauseButton" type="Button" parent="HUD"]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 14.0
+offset_top = 48.0
+offset_right = 98.0
+offset_bottom = 92.0
+theme_override_font_sizes/font_size = 16
+text = "Pause"
+
 [node name="MenuButton" type="Button" parent="HUD"]
 anchor_left = 1.0
 anchor_top = 0.0
@@ -191,6 +230,8 @@ offset_bottom = 58.0
 grow_horizontal = 0
 theme_override_font_sizes/font_size = 18
 text = "Menu"
+
+[node name="PauseMenu" parent="." instance=ExtResource("8_pause")]
 
 [node name="LessonOverlay" type="CanvasLayer" parent="."]
 layer = 10
