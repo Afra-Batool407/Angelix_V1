@@ -47,7 +47,7 @@ const MATH_CHAPTERS := [
 ]
 
 const UNIT1_TOPICS := [
-	{"id": "math.u01.real-numbers", "title": "1.1 Introduction to Real Numbers", "subtitle": "Section 1.1", "enabled": false},
+	{"id": "math.u01.real-numbers", "title": "1.1 Introduction to Real Numbers", "subtitle": "Section 1.1 - Open Lesson", "enabled": true},
 	{"id": "math.u01.real-numbers.rational-irrational-combination", "title": "Combination of Rational and Irrational Numbers", "subtitle": "Section 1.1.1 - Open 3D World", "enabled": true},
 	{"id": "math.u01.real-numbers.decimal-rational", "title": "Decimal Representation of Rational Numbers", "subtitle": "Section 1.1.2", "enabled": false},
 	{"id": "math.u01.real-numbers.decimal-irrational", "title": "Decimal Representation of Irrational Numbers", "subtitle": "Section 1.1.3", "enabled": false},
@@ -774,6 +774,11 @@ const CS_UNIT12_TOPICS := [
 const TARGET_TOPIC := "math.u01.real-numbers.rational-irrational-combination"
 const TARGET_SCENE := "res://main.tscn"
 
+## Lesson MVP: tapping this topic opens the offline lesson scene instead of
+## the 3D world. All other topics keep their current behavior.
+const LESSON_TOPIC := "math.u01.real-numbers"
+const LESSON_SCENE := "res://scenes/lesson.tscn"
+
 const SLIDE_TIME := 0.22
 
 const CARD_BG := Color(0.106, 0.129, 0.22)
@@ -934,7 +939,9 @@ func _on_card_pressed(item_id: String) -> void:
 				_current_unit_id = item_id
 				_slide_to_state(MenuState.TOPICS)
 		MenuState.TOPICS:
-			if item_id == TARGET_TOPIC:
+			if item_id == LESSON_TOPIC:
+				get_tree().change_scene_to_file(LESSON_SCENE)
+			elif item_id == TARGET_TOPIC:
 				get_tree().change_scene_to_file(TARGET_SCENE)
 
 

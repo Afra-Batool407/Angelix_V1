@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "topic_id": "math.u01.real-numbers",
+  "title": "1.1 Introduction to Real Numbers",
+  "language": "English with natural English-Roman Urdu code-switching (e.g. 'chalo', 'dekho', 'samajh aya?')",
+  "source_pages": [
+    {
+      "pdf_file": "page1-150.pdf",
+      "pdf_page": 3,
+      "printed_page": 1,
+      "sections": "1.1 Introduction to Real Numbers (unit intro); 1.1.1 Combination of Rational and Irrational Numbers (R = Q ∪ Q'); number-system history",
+      "ocr_quality": "Good at 150 DPI; 300 DPI re-scan p-005 confirmed wording."
+    },
+    {
+      "pdf_file": "page1-150.pdf",
+      "pdf_page": 5,
+      "printed_page": 3,
+      "sections": "1.1.2 Decimal Representation of Rational Numbers: terminating decimal definition; examples 1/4=0.25, 8/25=0.32, 3/8=0.375, 4/5=0.8",
+      "ocr_quality": "150 DPI plus 300 DPI re-scan; fractions confirmed as 1/4, 8/25, 3/8, 4/5."
+    },
+    {
+      "pdf_file": "page1-150.pdf",
+      "pdf_page": 6,
+      "printed_page": 4,
+      "sections": "1.1.2 (ii) Non-terminating and recurring decimals (0.333..., 0.1666..., 0.44444...); 1.1.3 Decimal Representation of Irrational Numbers; pi = 3.1415926535897932..., e = 2.71828182845904..., sqrt(2) = 1.41421356237309...; Example 1 classifying five decimals (iv) 3.36788542... irrational",
+      "ocr_quality": "Good; sqrt(2) digit expansion read from the listed bullet."
+    },
+    {
+      "pdf_file": "page1-150.pdf",
+      "pdf_page": 7,
+      "printed_page": 5,
+      "sections": "1.1.4 Representation of Rational and Irrational Numbers on Number Line; Example 2: sqrt(5) = 2.236... via right triangle mOA=2, mAB=1, Pythagoras gives mOB=sqrt(5), arc from O marks point P, |OP|=sqrt(5)",
+      "ocr_quality": "Ambiguous at 150 DPI; fully verified with 300 DPI re-scan."
+    },
+    {
+      "pdf_file": "page1-150.pdf",
+      "pdf_page": 8,
+      "printed_page": 6,
+      "sections": "Example 3: converting recurring decimals to p/q form (0.5-bar = 5/9, 0.93-bar = 93/99 = 31/33); Example 4: two rational numbers between 2 and 3 are 5/2 and 11/4; 1.1.5 Properties of Real Numbers heading",
+      "ocr_quality": "Verified with 300 DPI re-scan: 5/2 and 11/4 confirmed."
+    }
+  ],
+  "explanation": "Real numbers (R) are the combination of two families: rational numbers (Q) and irrational numbers (Q'). A rational number can be written as p/q, where p and q are integers and q is not 0. Its decimal form either terminates (finite digits: 1/4 = 0.25, 3/8 = 0.375) or repeats a pattern forever (0.333..., 0.939393...). An irrational number cannot be written as a quotient of integers; its decimal goes on forever with no repeating pattern, like pi = 3.14159..., e = 2.71828..., or sqrt(2) = 1.41421... Every point on the number line is exactly one real number, so rational and irrational numbers fit together with no gaps: R = Q ∪ Q'.",
+  "pakistani_life_example": "Shopping for cloth at the bazaar: a shopkeeper cuts 2.5 metres of fabric for a shirt (a terminating decimal — rational). The price of 1 metre is Rs 480.50 (also rational). But if you fold a 2-metre ribbon in half again and again and measure the diagonal of a square courtyard tile of side 1 m, the diagonal is sqrt(2) = 1.41421... metres — it never ends and never repeats, so it is irrational. Both kinds of numbers appear on the same measuring tape of daily life: that tape is the real number line.",
+  "worked_example": {
+    "title": "Locate sqrt(5) on the number line (textbook Example 2)",
+    "steps": [
+      "Since sqrt(5) = 2.236..., it lies just past 2 on the number line.",
+      "Draw segment OA of length 2 units along the line, then draw AB of length 1 unit perpendicular to it at A, making a right-angled triangle OAB.",
+      "By the Pythagoras theorem: (mOB)^2 = (mOA)^2 + (mAB)^2 = 2^2 + 1^2 = 4 + 1 = 5, so mOB = sqrt(5).",
+      "With O as centre and radius mOB = sqrt(5), draw an arc that meets the number line at point P.",
+      "Then |OP| = sqrt(5), so point P represents sqrt(5) on the number line."
+    ],
+    "answer": "Point P on the number line with |OP| = sqrt(5) ≈ 2.236",
+    "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 7 (printed page 5), Section 1.1.4, Example 2"
+  },
+  "practice": [
+    {
+      "id": "practice.sqrt2-number-line",
+      "prompt": "Follow the textbook method: locate sqrt(2) on the number line using a right-angled triangle. Which sides do you draw first?",
+      "hint": "sqrt(2) is close to 1. Draw OA = 1 unit on the line and AB = 1 unit perpendicular at A. Then use Pythagoras on triangle OAB.",
+      "solution": "Draw OA = 1 unit on the number line and AB = 1 unit perpendicular at A. In right triangle OAB: (mOB)^2 = 1^2 + 1^2 = 2, so mOB = sqrt(2). Draw an arc with centre O and radius mOB to cut the number line at P; then |OP| = sqrt(2) ≈ 1.414.",
+      "citation": "Method follows PCTB Mathematics-9, page1-150.pdf PDF page 7 (printed page 5), Section 1.1.4, Example 2"
+    }
+  ],
+  "quiz": [
+    {
+      "id": "quiz.real-numbers.rational-decimal",
+      "text": "Which of these is a rational number?",
+      "choices": [
+        "sqrt(2) = 1.41421356237309...",
+        "0.25",
+        "pi = 3.1415926535897932...",
+        "1.709975947... (no repeating pattern)"
+      ],
+      "correct_index": 1,
+      "explanation": "0.25 is a terminating decimal, and every terminating decimal is a rational number (0.25 = 1/4). The other three decimals go on forever without a repeating pattern, so they are irrational.",
+      "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 5 (printed page 3) for terminating decimals; PDF page 6 (printed page 4) for the irrational examples"
+    },
+    {
+      "id": "quiz.real-numbers.recurring-to-fraction",
+      "text": "The recurring decimal 0.333... can be written in p/q form as:",
+      "choices": [
+        "3/10",
+        "1/3",
+        "33/100",
+        "3/100"
+      ],
+      "correct_index": 1,
+      "explanation": "The textbook method: let x = 0.555... in Example 3 works the same way here — multiply by 10 to get 10x = 3.333..., subtract x = 0.333..., giving 9x = 3, so x = 3/9 = 1/3. The same book also lists 0.333... = 0.3-bar with 3 repeating infinitely.",
+      "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 6 (printed page 4) lists 0.333... as recurring; PDF page 8 (printed page 6), Example 3 shows the multiply-and-subtract method (0.5-bar = 5/9)"
+    },
+    {
+      "id": "quiz.real-numbers.sqrt5-location",
+      "text": "To locate sqrt(5) on the number line, the textbook draws a right-angled triangle. Which two sides does it use?",
+      "choices": [
+        "OA = 2 units and AB = 1 unit",
+        "OA = 1 unit and AB = 1 unit",
+        "OA = 3 units and AB = 2 units",
+        "OA = 5 units and AB = 5 units"
+      ],
+      "correct_index": 0,
+      "explanation": "sqrt(5) = 2.236... is near 2, so the book draws mOA = 2 units along the line and mAB = 1 unit perpendicular at A. Pythagoras then gives (mOB)^2 = 2^2 + 1^2 = 5, so mOB = sqrt(5), and an arc from O marks the point P with |OP| = sqrt(5).",
+      "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 7 (printed page 5), Section 1.1.4, Example 2"
+    }
+  ],
+  "angel_replies": [
+    {
+      "id": "angel.u01.intro.welcome",
+      "intent": "explain_again",
+      "mood": "happy",
+      "text": "Chalo, one more time! Real numbers R are ALL the numbers on the number line: rationals (which stop or repeat, like 0.25 or 0.333...) plus irrationals (which never stop and never repeat, like sqrt(2)). R = Q union Q'. Dekho — every point on the line is a real number."
+    },
+    {
+      "id": "angel.u01.intro.hint",
+      "intent": "give_hint",
+      "mood": "thinking",
+      "text": "Hint: ask yourself — does the decimal terminate (stop), repeat a pattern, or go on forever with no pattern? Stop or repeat = rational. Forever with no pattern = irrational. Try it on 0.444... first."
+    },
+    {
+      "id": "angel.u01.intro.quiz_invite",
+      "intent": "quiz_me",
+      "mood": "excited",
+      "text": "Ready for the test? 3 questions, only from what we just learnt — decimals, p/q form, and sqrt(5) on the number line. Take your time, beta, you can do this!"
+    },
+    {
+      "id": "angel.u01.intro.wrong_answer",
+      "intent": "why_wrong",
+      "mood": "neutral",
+      "text": "Koi baat nahi — small mistake! Re-check one thing: does the decimal STOP or REPEAT (that is rational), or does it run on FOREVER with no pattern (that is irrational)? One check, and the answer becomes clear."
+    },
+    {
+      "id": "angel.u01.intro.encourage",
+      "intent": "encouragement",
+      "mood": "happy",
+      "text": "You are doing great! Even the Sumerians took thousands of years to build the number system — you are learning it in one unit. Shabash, keep going!"
+    },
+    {
+      "id": "angel.u01.intro.smalltalk",
+      "intent": "smalltalk",
+      "mood": "neutral",
+      "text": "Main theek hoon, shukriya! I am Angel, your study buddy. When you want, we can revise real numbers again, try a hint, or start the quiz — just tell me."
+    }
+  ],
+  "teaching_animation": {
+    "title": "The Real Number Line",
+    "steps": [
+      {
+        "order": 1,
+        "action": "show_number_line",
+        "caption": "This is the real number line R — home of every number."
+      },
+      {
+        "order": 2,
+        "action": "mark_point",
+        "value": 0.25,
+        "label": "0.25",
+        "kind": "rational",
+        "caption": "1/4 = 0.25 terminates: it stops. Rational!"
+      },
+      {
+        "order": 3,
+        "action": "mark_point",
+        "value": 1.4142,
+        "label": "sqrt(2)",
+        "kind": "irrational",
+        "caption": "sqrt(2) = 1.41421... never stops, never repeats. Irrational!"
+      },
+      {
+        "order": 4,
+        "action": "highlight_interval",
+        "from": 2.0,
+        "to": 2.5,
+        "label": "sqrt(5)",
+        "caption": "sqrt(5) = 2.236... lives between 2 and 2.5 — we locate it with an arc."
+      },
+      {
+        "order": 5,
+        "action": "mark_point",
+        "value": 2.236,
+        "label": "sqrt(5)",
+        "kind": "irrational",
+        "caption": "Arc from O with radius mOB marks point P: |OP| = sqrt(5)."
+      },
+      {
+        "order": 6,
+        "action": "show_caption",
+        "caption": "Rationals + irrationals fill the whole line with no gaps: R = Q union Q'."
+      }
+    ]
+  }
+}
