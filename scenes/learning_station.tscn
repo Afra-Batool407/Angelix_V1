@@ -85,6 +85,9 @@ text = "Tap Interact"
 font_size = 30
 position = Vector3(0, -0.5, 0)
 
+[node name="ActivityHolder" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
+
 [node name="Padlock" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9, 0)
 mesh = SubResource("BoxMesh_padlock")

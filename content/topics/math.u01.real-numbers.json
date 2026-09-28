@@ -188,5 +188,71 @@
         "caption": "Rationals + irrationals fill the whole line with no gaps: R = Q union Q'."
       }
     ]
+  },
+  "world_activity": {
+    "version": 1,
+    "number_line": {
+      "min_value": -4.0,
+      "max_value": 4.0,
+      "title": "The Real Number Line"
+    },
+    "marker_tasks": [
+      {
+        "id": "activity.task.025",
+        "prompt": "Walk the marker to 1/4 = 0.25 (a terminating decimal - rational).",
+        "target_value": 0.25,
+        "tolerance": 0.15,
+        "kind": "rational",
+        "explain_correct": "0.25 stops after two digits, and every terminating decimal is a rational number (0.25 = 1/4).",
+        "explain_wrong": "Not there yet - 0.25 lies one quarter of the way from 0 to 1. Terminating decimals like this are rational.",
+        "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 5 (printed page 3), Section 1.1.2"
+      },
+      {
+        "id": "activity.task.sqrt2",
+        "prompt": "Now mark sqrt(2), the famous irrational number (1.41421356237309...).",
+        "target_value": 1.4142,
+        "tolerance": 0.2,
+        "kind": "irrational",
+        "explain_correct": "sqrt(2) = 1.41421... goes on forever with no repeating pattern, so it is irrational.",
+        "explain_wrong": "sqrt(2) is just past 1 (about 1.41). Its decimal never terminates and never repeats - that is why it is irrational.",
+        "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 6 (printed page 4), Section 1.1.3"
+      },
+      {
+        "id": "activity.task.sqrt5",
+        "prompt": "Finally, mark sqrt(5) - the number the textbook locates with the 2-1 right triangle (2.236...).",
+        "target_value": 2.236,
+        "tolerance": 0.18,
+        "kind": "irrational",
+        "explain_correct": "sqrt(5) = 2.236... sits between 2 and 2.5 - exactly where the textbook's arc from O lands point P (|OP| = sqrt(5)).",
+        "explain_wrong": "Close! sqrt(5) = 2.236..., just past 2. The book draws OA = 2 and AB = 1, then Pythagoras gives mOB = sqrt(5).",
+        "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 7 (printed page 5), Section 1.1.4, Example 2"
+      }
+    ],
+    "quiz_orbs": [
+      {
+        "id": "activity.orb.terminating",
+        "value": -2.0,
+        "statement": "Every terminating decimal is a rational number.",
+        "is_true": true,
+        "explain": "A terminating decimal can always be written as p/q (0.25 = 1/4), so it is rational.",
+        "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 5 (printed page 3), Section 1.1.2"
+      },
+      {
+        "id": "activity.orb.recurring",
+        "value": 0.0,
+        "statement": "0.333... is an irrational number.",
+        "is_true": false,
+        "explain": "0.333... repeats one digit forever, and the book says non-terminating RECURRING decimals are rational. (In fact 0.333... = 1/3.)",
+        "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 6 (printed page 4), Sections 1.1.2-1.1.3"
+      },
+      {
+        "id": "activity.orb.union",
+        "value": 3.0,
+        "statement": "The real numbers are the union of rational and irrational numbers: R = Q union Q'.",
+        "is_true": true,
+        "explain": "Exactly - every point on the number line is a real number, and R = Q union Q' fills the whole line with no gaps.",
+        "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 3 (printed page 1), Section 1.1.1"
+      }
+    ]
   }
 }

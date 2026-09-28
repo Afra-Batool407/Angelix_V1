@@ -25,8 +25,20 @@ const LESSON_OVERLAY_GROUP := "lesson_overlay"
 @onready var _overlay_root: Control = $LessonOverlay/Root
 @onready var _overlay_holder: Control = $LessonOverlay/Root/Panel/Holder
 @onready var _overlay_close: Button = $LessonOverlay/Root/Panel/TopBar/CloseButton
+@onready var _activity_panel: PanelContainer = $HUD/ActivityPanel
+@onready var _activity_hint: Label = $HUD/ActivityPanel/HBox/ActivityHint
+@onready var _left_btn: Button = $HUD/ActivityPanel/HBox/LeftButton
+@onready var _submit_btn: Button = $HUD/ActivityPanel/HBox/SubmitButton
+@onready var _right_btn: Button = $HUD/ActivityPanel/HBox/RightButton
+@onready var _lesson_btn: Button = $HUD/ActivityPanel/HBox/LessonButton
+@onready var _activity_done: Label = $HUD/ActivityDoneLabel
+
+## "explore" = free 3D world; "station" = spawned for a topic near its
+## station with the in-world activity active (Phase 2).
+var controller_mode := "explore"
 
 var _player: PlayerController
+var _activity: NumberLineActivity
 var _stations: Array = []
 var _active_station: LearningStation = null
 var _lesson_open := false
@@ -40,6 +52,14 @@ func _ready() -> void:
 	_setup_overlay()
 	_setup_hud()
 	_apply_topic_selection()
+
+
+## Applies the menu's selected topic: when it belongs to the Real Numbers
+## station family, start in station mode with the activity visible.
+func _apply_topic_selection() -> void:
+	var selected := GameSession.selected_topic_id
+	if selected != "" and GameSession.matches_station(selected, "math.u01.real-numbers"):
+		_set_activity_active(true)
 
 
 # ----------------------------------------------------------------- spawn
@@ -95,6 +115,67 @@ func _setup_stations() -> void:
 	for st in _stations:
 		(st as LearningStation).player_entered.connect(_on_station_entered)
 		(st as LearningStation).player_exited.connect(_on_station_exited)
+	_setup_activity()
+
+
+## Builds the in-world Real Numbers activity from the station topic's JSON
+## (optional `world_activity` section; validated inside the activity node).
+func _setup_activity() -> void:
+	var station := _find_station("math.u01.real-numbers")
+	if station == null:
+		return
+	var data := GameSession.load_topic_data(station.topic_id)
+	var activity_scene: PackedScene = load("res://scenes/number_line_activity.tscn")
+	_activity = activity_scene.instantiate() as NumberLineActivity
+	var holder := station.get_node_or_null("ActivityHolder") as Node3D
+	if holder != null:
+		holder.add_child(_activity)
+	else:
+		_activity.position = Vector3(0, 1.1, -6.0)
+		station.add_child(_activity)
+	_activity.setup(data.get("world_activity", {}))
+	_activity.task_changed.connect(func(prompt: String) -> void:
+		_activity_hint.text = prompt)
+	_activity.visible = false
+	_activity.activity_completed.connect(_on_activity_completed)
+	var done := LearningProgress.new()
+	done.load_progress()
+	if done.get_topic(station.topic_id).get("activity_done", false):
+		_show_activity_done(true)
+
+
+func _find_station(topic_id: String) -> LearningStation:
+	for st in _stations:
+		if st is LearningStation and (st as LearningStation).topic_id == topic_id:
+			return st
+	return null
+
+
+func _set_activity_active(active: bool) -> void:
+	if _activity == null or not is_instance_valid(_activity):
+		return
+	_activity.visible = active
+	_activity_panel.visible = active
+	if active:
+		controller_mode = "station"
+	else:
+		controller_mode = "explore"
+
+
+func _on_activity_completed() -> void:
+	if _active_station != null:
+		_mark_activity_done(_active_station.topic_id)
+	_show_activity_done(true)
+
+
+func _mark_activity_done(topic_id: String) -> void:
+	var prog := LearningProgress.new()
+	prog.load_progress()
+	prog.set_activity_done(topic_id, true)
+
+
+func _show_activity_done(done: bool) -> void:
+	_activity_done.visible = done
 
 
 func _on_station_entered(station: LearningStation) -> void:
@@ -114,6 +195,8 @@ func _refresh_prompt() -> void:
 	if _active_station == null or _lesson_open:
 		_prompt_label.visible = false
 		_interact_button.visible = false
+		if _activity != null and is_instance_valid(_activity) and _lesson_open:
+			_set_activity_active(false)
 		return
 	_prompt_label.text = _active_station.display_title \
 		+ ("  (Coming soon)" if not _active_station.available else "")
@@ -121,6 +204,9 @@ func _refresh_prompt() -> void:
 	# Interact only for stations that actually have content.
 	_interact_button.visible = _active_station.available \
 		and GameSession.has_topic_content(_active_station.topic_id)
+	if _activity != null and is_instance_valid(_activity):
+		var in_station_zone: bool = _active_station.topic_id == "math.u01.real-numbers"
+		_set_activity_active(in_station_zone and not _lesson_open)
 
 
 # ---------------------------------------------------------------- overlay
@@ -144,6 +230,7 @@ func _open_lesson(topic_id: String) -> void:
 	_overlay_root.visible = true
 	if _player != null:
 		_player.locked = true
+	_set_activity_active(false)
 	_refresh_prompt()
 
 
@@ -158,6 +245,9 @@ func _close_lesson() -> void:
 	if _player != null:
 		_player.locked = false
 	_refresh_prompt()
+	# Returning from the lesson, resume the activity if back in its zone.
+	if _active_station != null and _active_station.topic_id == "math.u01.real-numbers":
+		_set_activity_active(true)
 
 
 func is_lesson_open() -> bool:
@@ -169,6 +259,18 @@ func is_lesson_open() -> bool:
 func _setup_hud() -> void:
 	_menu_button.pressed.connect(_confirm_return_to_menu)
 	_interact_button.pressed.connect(_on_interact_pressed)
+	_left_btn.pressed.connect(func() -> void:
+		if _activity != null and is_instance_valid(_activity):
+			_activity.marker_left())
+	_right_btn.pressed.connect(func() -> void:
+		if _activity != null and is_instance_valid(_activity):
+			_activity.marker_right())
+	_submit_btn.pressed.connect(func() -> void:
+		if _activity != null and is_instance_valid(_activity):
+			_activity.submit_marker())
+	_lesson_btn.pressed.connect(func() -> void:
+		if _active_station != null:
+			_open_lesson(_active_station.topic_id))
 	_refresh_prompt()
 
 
@@ -198,6 +300,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		if _lesson_open:
 			_close_lesson()
+		elif _activity != null and is_instance_valid(_activity) and _activity.visible:
+			_set_activity_active(false)
 		else:
 			_confirm_return_to_menu()
 
@@ -206,6 +310,8 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		if _lesson_open:
 			_close_lesson()
+		elif _activity != null and is_instance_valid(_activity) and _activity.visible:
+			_set_activity_active(false)
 		else:
 			_confirm_return_to_menu()
 

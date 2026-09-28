@@ -359,3 +359,74 @@ if FAILURES:
     for f in FAILURES:
         print("FAIL ->", f)
     sys.exit(1)
+
+# ============================================================
+# Phase 2 checks (in-world Real Numbers activity)
+# ============================================================
+import json as _json2
+
+def _p2(name, ok, detail=""):
+    check(name, ok, detail)
+
+data = _json2.loads((ROOT / "content/topics/math.u01.real-numbers.json").read_text(encoding="utf-8"))
+wa = data.get("world_activity", {})
+_p2("world_activity present", isinstance(wa, dict) and len(wa) > 0)
+nl = wa.get("number_line", {})
+_p2("number_line config valid",
+    isinstance(nl, dict) and nl.get("min_value") < nl.get("max_value"))
+tasks = wa.get("marker_tasks", [])
+_p2(">=3 marker tasks with fields", len(tasks) >= 3 and all(
+    {"id", "prompt", "target_value", "tolerance", "kind",
+     "explain_correct", "explain_wrong"} <= set(t) for t in tasks))
+orbs = wa.get("quiz_orbs", [])
+_p2(">=3 quiz orbs with fields", len(orbs) >= 3 and all(
+    {"id", "value", "statement", "is_true", "explain"} <= set(o) for o in orbs))
+_p2("orb values within line range", all(
+    nl.get("min_value") <= o.get("value") <= nl.get("max_value") for o in orbs))
+_p2("task targets within line range", all(
+    nl.get("min_value") <= t.get("target_value") <= nl.get("max_value") for t in tasks))
+_p2("original content keys preserved", all(
+    k in data for k in ["explanation", "pakistani_life_example", "worked_example",
+                        "practice", "quiz", "angel_replies", "teaching_animation"]))
+_p2("quiz still exactly 3", len(data.get("quiz", [])) == 3)
+
+act = (ROOT / "scripts/number_line_activity.gd").read_text(encoding="utf-8")
+_p2("activity: validation with fallback", "_build_fallback" in act and "push_error" in act)
+_p2("activity: range sanity checked", "is_nan" in act)
+_p2("activity: orbs data-driven", "quiz_orbs" in act)
+_p2("activity: completion signal", "signal activity_completed" in act)
+_p2("activity: HUD task mirror", "signal task_changed" in act)
+
+wc2 = (ROOT / "scripts/world_controller.gd").read_text(encoding="utf-8")
+_p2("world: loads activity from JSON", "load_topic_data" in wc2)
+_p2("world: activity buttons wired", all(s in wc2 for s in [
+    "_left_btn.pressed.connect", "_submit_btn.pressed.connect",
+    "_right_btn.pressed.connect", "_lesson_btn.pressed.connect"]))
+_p2("world: back closes activity first",
+    wc2.find("_set_activity_active(false)") < wc2.find("_confirm_return_to_menu()\n\t\telse") or
+    "_activity.visible:\n\t\t\t_set_activity_active(false)" in wc2)
+_p2("world: activity done persisted", "set_activity_done" in wc2)
+_p2("world: reopening respects saved done",
+    'get("activity_done", false)' in wc2)
+
+lp = (ROOT / "scripts/learning_progress.gd").read_text(encoding="utf-8")
+_p2("progress: activity_done sanitized", '"activity_done": bool(entry.get("activity_done", false))' in lp)
+_p2("progress: set_activity_done API", "func set_activity_done" in lp)
+
+orb_scene = (ROOT / "scenes/quiz_orb.tscn").read_text(encoding="utf-8")
+orb_ext = orb_scene.count("[ext_resource ")
+orb_subs = orb_scene.count("[sub_resource ")
+orb_steps = int(re.search(r"load_steps=(\d+)", orb_scene).group(1))
+_p2("quiz_orb.tscn load_steps consistent", orb_steps == orb_ext + orb_subs + 1)
+act_scene = (ROOT / "scenes/number_line_activity.tscn").read_text(encoding="utf-8")
+act_ext = act_scene.count("[ext_resource ")
+act_subs = act_scene.count("[sub_resource ")
+act_steps = int(re.search(r"load_steps=(\d+)", act_scene).group(1))
+_p2("number_line_activity.tscn load_steps consistent", act_steps == act_ext + act_subs + 1)
+
+print()
+print(f"TOTAL: {len(CHECKS)} checks, {len(FAILURES)} failed")
+if FAILURES:
+    for f in FAILURES:
+        print("FAIL ->", f)
+    sys.exit(1)

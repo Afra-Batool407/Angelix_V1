@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/number_line_activity.gd" id="1_activity"]
+
+[node name="NumberLineActivity" type="Node3D"]
+script = ExtResource("1_activity")
+
+[node name="Status" type="Label3D" parent="."]
+position = Vector3(0, 2.6, 0)
+pixel_size = 0.005
+billboard = 1
+outline_size = 12
+modulate = Color(0.98, 0.9, 0.6, 1)
+text = "Welcome!"
+font_size = 52

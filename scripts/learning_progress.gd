@@ -64,6 +64,8 @@ func _sanitize_entry(entry: Dictionary, topic_id: String) -> Dictionary:
 		"best_score": clampi(int(entry.get("best_score", 0)), 0, 3),
 		"mastered": bool(entry.get("mastered", false)),
 		"last_attempt_ms": maxi(0, int(entry.get("last_attempt_ms", 0))),
+		# v1 -> v1.1 optional field; missing = false (safe migration).
+		"activity_done": bool(entry.get("activity_done", false)),
 	}
 
 
@@ -98,6 +100,14 @@ func get_topic(topic_id: String) -> Dictionary:
 		"mastered": false,
 		"last_attempt_ms": 0,
 	}
+
+
+## Marks the in-world activity complete for a topic (idempotent).
+func set_activity_done(topic_id: String, done: bool) -> void:
+	var entry := get_topic(topic_id)
+	entry["activity_done"] = done
+	_topics[topic_id] = entry
+	save_progress()
 
 
 ## Records one finished quiz attempt (score = number of correct answers 0..3).
