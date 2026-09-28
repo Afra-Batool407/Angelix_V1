@@ -29,6 +29,28 @@ var _wing_phase := 0.0
 var _visual_yaw := 0.0
 var _bob_offset := 0.0
 
+## Mood -> procedural state. The imported Angel model has NO AnimationPlayer
+## clips (verified: angel.tscn is pure geometry + this script), so moods map
+## onto verified procedural parameters with "neutral" as the safe fallback.
+var _mood_energy := 1.0   ## glow energy multiplier
+var _mood_flap := 1.0     ## wing flap speed multiplier
+
+
+func set_mood(mood: String) -> void:
+	match mood:
+		"happy":
+			_mood_energy = 1.3
+			_mood_flap = 1.2
+		"excited":
+			_mood_energy = 1.8
+			_mood_flap = 1.8
+		"thinking":
+			_mood_energy = 0.9
+			_mood_flap = 0.7
+		_:
+			_mood_energy = 1.0   # neutral and any unknown mood: safe fallback
+			_mood_flap = 1.0
+
 @onready var _visual: Node3D = $Visual
 @onready var _wings: Node3D = $Visual/Wings
 @onready var _wing_l: Node3D = $Visual/Wings/WingL
@@ -91,7 +113,7 @@ func _physics_process(delta: float) -> void:
 	_visual.rotation.x = lerp(_visual.rotation.x, speed_frac * TILT_ANGLE, 8.0 * delta)
 
 	# --- Wing flap: slow majestic beat, faster while gliding ---
-	_wing_phase += delta * TAU / (WING_FLAP_TIME / (1.0 + speed_frac * 0.8))
+	_wing_phase += delta * _mood_flap * TAU / (WING_FLAP_TIME / (1.0 + speed_frac * 0.8))
 	var flap := sin(_wing_phase)
 	_wing_l.rotation.z = deg_to_rad(18.0) + flap * deg_to_rad(14.0)
 	_wing_r.rotation.z = -deg_to_rad(18.0) - flap * deg_to_rad(14.0)
@@ -100,7 +122,7 @@ func _physics_process(delta: float) -> void:
 	# --- Halo spin and pulse; body glow breathes ---
 	_halo.rotation.y += delta * 1.6
 	_halo.scale = Vector3.ONE * (1.0 + 0.04 * sin(_bob_phase * 2.0))
-	_glow.light_energy = 0.9 + 0.25 * sin(_bob_phase * 2.0)
+	_glow.light_energy = (0.9 + 0.25 * sin(_bob_phase * 2.0)) * _mood_energy
 	_body.scale.y = 1.0 + 0.02 * sin(_bob_phase * 2.0 + PI / 3.0)
 
 	moved.emit(moving)

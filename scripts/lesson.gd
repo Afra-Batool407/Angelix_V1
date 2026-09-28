@@ -22,6 +22,15 @@ const COL_MUTED := Color(0.62, 0.67, 0.82)
 const COL_GOOD := Color(0.30, 0.85, 0.60)
 const COL_BAD := Color(0.95, 0.42, 0.42)
 
+## When true (embedded as the world's lesson overlay), the lesson hides its
+## own back button and ignores back navigation; the world controller owns
+## closing the overlay and handling the Android back key. Standalone use
+## (menu fallback route) keeps the old behavior.
+var overlay_mode := false
+## Optional override of the topic JSON path (set by the world controller for
+## a specific station's topic; standalone route uses the default topic).
+var topic_path_override := ""
+
 var topic_data := {}
 var _brain: AngelBrain
 var _progress := LearningProgress.new()
@@ -50,7 +59,8 @@ var _last_wrong_point := ""
 
 func _ready() -> void:
 	_progress.load_progress()
-	_load_topic(DEFAULT_TOPIC_PATH)
+	var path := topic_path_override if topic_path_override != "" else DEFAULT_TOPIC_PATH
+	_load_topic(path)
 	if topic_data.is_empty():
 		_show_error_screen("Lesson content could not be loaded. Please reopen the topic from the menu.")
 		return
@@ -81,8 +91,12 @@ func _load_topic(path: String) -> void:
 		return
 	var data: Dictionary = parsed
 	var tid := String(data.get("topic_id", ""))
-	if tid != EXPECTED_TOPIC_ID:
+	if topic_path_override == "" and tid != EXPECTED_TOPIC_ID:
 		push_error("Lesson: unexpected topic_id '%s' — refusing to render." % tid)
+		topic_data = {}
+		return
+	if topic_path_override != "" and tid.is_empty():
+		push_error("Lesson: override content has no topic_id — refusing to render.")
 		topic_data = {}
 		return
 	if String(data.get("explanation", "")).is_empty():
@@ -98,8 +112,8 @@ func _load_topic(path: String) -> void:
 
 func _build_ui() -> void:
 	_title_label.text = String(topic_data.get("title", "Lesson"))
-	_back_button.visible = true
-	if not _back_button.pressed.is_connected(_go_back):
+	_back_button.visible = not overlay_mode
+	if not overlay_mode and not _back_button.pressed.is_connected(_go_back):
 		_back_button.pressed.connect(_go_back)
 	if not _send_button.pressed.is_connected(_on_send_pressed):
 		_send_button.pressed.connect(_on_send_pressed)
@@ -609,11 +623,15 @@ func _go_back() -> void:
 
 
 func _notification(what: int) -> void:
+	if overlay_mode:
+		return  # the world controller owns back handling for the overlay
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		_go_back()
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if overlay_mode:
+		return  # the world controller owns back handling for the overlay
 	# Android hardware back key maps to ui_cancel by default in Godot 4.
 	if event.is_action_pressed("ui_cancel"):
 		_go_back()

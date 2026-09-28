@@ -942,6 +942,7 @@ func _on_card_pressed(item_id: String) -> void:
 			if item_id == LESSON_TOPIC:
 				get_tree().change_scene_to_file(LESSON_SCENE)
 			elif item_id == TARGET_TOPIC:
+				GameSession.selected_topic_id = item_id
 				get_tree().change_scene_to_file(TARGET_SCENE)
 
 

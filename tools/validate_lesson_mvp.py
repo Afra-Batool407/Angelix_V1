@@ -252,4 +252,110 @@ for name, ok, detail in CHECKS:
     if detail and not ok:
         line += f" -> {detail}"
     print(line)
-sys.exit(1 if FAILURES else 0)
+# (final exit happens after the AngelTown checks below)
+
+# ============================================================
+# AngelTown phase checks (appended; same fail-fast reporting)
+# ============================================================
+import json as _json
+
+def _at(name, ok, detail=""):
+    check(name, ok, detail)
+
+# --- Session autoload ---
+proj = (ROOT / "project.godot").read_text(encoding="utf-8")
+_at("autoload GameSession registered", 'GameSession="*res://scripts/game_session.gd"' in proj)
+_at("main_scene still ui_menu", 'run/main_scene="res://scenes/ui_menu.tscn"' in proj)
+
+sess = (ROOT / "scripts/game_session.gd").read_text(encoding="utf-8")
+_at("session: content_path_for", "func content_path_for" in sess)
+_at("session: has_topic_content", "func has_topic_content" in sess)
+_at("session: matches_station family match", "begins_with(station_topic_id" in sess)
+
+# --- Menu records selection; routing unchanged ---
+menu = (ROOT / "scripts/menu_controller.gd").read_text(encoding="utf-8")
+_at("menu: records selected topic", "GameSession.selected_topic_id = item_id" in menu)
+_at("menu: 3D route preserved", "elif item_id == TARGET_TOPIC:" in menu)
+_at("menu: lesson route preserved", "if item_id == LESSON_TOPIC:" in menu)
+
+# --- World controller ---
+wc = (ROOT / "scripts/world_controller.gd").read_text(encoding="utf-8")
+_at("world: spawns player scene", "res://scenes/player.tscn" in wc)
+_at("world: overlay keeps world alive (no change_scene in open/close)",
+    "change_scene" not in wc.split("func _open_lesson")[1].split("func ")[1])
+_at("world: locks player while overlay open", "_player.locked = true" in wc)
+_at("world: closes overlay on back first",
+    wc.find("if _lesson_open:\n\t\t\t_close_lesson()") != -1
+    or "_close_lesson()\n\t\telse:" in wc)
+_at("world: only validated content opens lessons",
+    "has_topic_content" in wc)
+_at("world: fallback creates real-numbers station",
+    '"math.u01.real-numbers"' in wc)
+
+# --- Learning station configurability ---
+st = (ROOT / "scripts/learning_station.gd").read_text(encoding="utf-8")
+for field in ["topic_id", "display_title", "zone", "available"]:
+    _at(f"station: @export {field}", f"@export var {field}" in st)
+_at("station: locked shows Coming soon", '"Coming soon"' in st)
+
+# --- Station scene integrity ---
+stn = (ROOT / "scenes/learning_station.tscn").read_text(encoding="utf-8")
+ext = stn.count("[ext_resource ")
+subs = stn.count("[sub_resource ")
+steps = int(re.search(r"load_steps=(\d+)", stn).group(1))
+_at("learning_station.tscn load_steps consistent", steps == ext + subs + 1,
+    f"steps={steps} ext={ext} subs={subs}")
+_at("learning_station.tscn has no bogus refs", "PrimitiveMeshes" not in stn)
+
+# --- Player scene/controller ---
+pl = (ROOT / "scenes/player.tscn").read_text(encoding="utf-8")
+pl_ext = pl.count("[ext_resource ")
+pl_subs = pl.count("[sub_resource ")
+pl_steps = int(re.search(r"load_steps=(\d+)", pl).group(1))
+_at("player.tscn load_steps consistent", pl_steps == pl_ext + pl_subs + 1,
+    f"steps={pl_steps} ext={pl_ext} subs={pl_subs}")
+pc = (ROOT / "scripts/player_controller.gd").read_text(encoding="utf-8")
+_at("player: lockable", "var locked := false" in pc or "var locked" in pc)
+_at("player: uses joystick group", 'get_nodes_in_group("joystick")' in pc)
+_at("player: has gravity", "GRAVITY" in pc)
+
+# --- main.tscn integrity and wiring ---
+mn = (ROOT / "main.tscn").read_text(encoding="utf-8")
+mn_ext = mn.count("[ext_resource ")
+mn_subs = mn.count("[sub_resource ")
+mn_steps = int(re.search(r"load_steps=(\d+)", mn).group(1))
+_at("main.tscn load_steps consistent", mn_steps == mn_ext + mn_subs + 1,
+    f"steps={mn_steps} ext={mn_ext} subs={mn_subs}")
+_at("main.tscn: station instanced", 'instance=ExtResource("5_station")' in mn)
+_at("main.tscn: station in group", 'groups=["learning_station"]' in mn)
+_at("main.tscn: HUD present", "[node name=\"HUD\" type=\"CanvasLayer\"" in mn)
+_at("main.tscn: LessonOverlay present", "[node name=\"LessonOverlay\" type=\"CanvasLayer\"" in mn)
+_at("main.tscn: overlay starts hidden", "visible = false" in mn.split("[node name=\"LessonOverlay\"")[1])
+_at("main.tscn: joystick kept", "TouchJoystick" in mn)
+_at("main.tscn: Angel kept", 'path="res://scenes/angel.tscn"' in mn)
+_at("main.tscn: terrain kept", "terrain.gd" in mn)
+
+# --- Angel moods: verified procedural fallback, no invented clips ---
+ang = (ROOT / "scripts/angel.gd").read_text(encoding="utf-8")
+_at("angel: no invented AnimationPlayer usage",
+    "AnimationPlayer.new(" not in ang and "$AnimationPlayer" not in ang
+    and "play(\"" not in ang)
+_at("angel: set_mood exists", "func set_mood" in ang)
+_at("angel: neutral fallback", "_mood_energy = 1.0" in ang)
+
+# --- Lesson overlay mode (standalone route preserved) ---
+ls = (ROOT / "scripts/lesson.gd").read_text(encoding="utf-8")
+_at("lesson: overlay_mode exists", "var overlay_mode := false" in ls)
+_at("lesson: standalone back still works",
+    "NOTIFICATION_WM_GO_BACK_REQUEST" in ls and "ui_cancel" in ls)
+
+# --- AngelFollower inner class defined & used ---
+_at("world: AngelFollower class", "class AngelFollower" in wc)
+_at("world: follower configured", "driver.configure(" in wc)
+
+print()
+print(f"TOTAL: {len(CHECKS)} checks, {len(FAILURES)} failed")
+if FAILURES:
+    for f in FAILURES:
+        print("FAIL ->", f)
+    sys.exit(1)

@@ -10,6 +10,15 @@ var _target: Node3D
 var _has_target := false
 
 
+## Re-points the rig at a new target (e.g. the player instead of the Angel)
+## and snaps next to it so the camera does not fly across the map.
+func set_target(target: Node3D) -> void:
+	_target = target
+	_has_target = _target != null
+	if _has_target:
+		global_position = _target.global_position + Vector3(0, height_offset, 0)
+
+
 func _ready() -> void:
 	_target = get_node_or_null(target_path) as Node3D
 	_has_target = _target != null

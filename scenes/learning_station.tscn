@@ -1,0 +1,92 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/learning_station.gd" id="1_station"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_trigger"]
+radius = 3.4
+height = 3.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ring"]
+transparency = 1
+albedo_color = Color(0.98, 0.72, 0.25, 0.6)
+emission_enabled = true
+emission = Color(0.98, 0.72, 0.25, 1)
+emission_energy_multiplier = 1.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_post"]
+albedo_color = Color(0.55, 0.6, 0.78, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lock"]
+albedo_color = Color(0.75, 0.78, 0.88, 1)
+emission_enabled = true
+emission = Color(0.4, 0.45, 0.6, 1)
+emission_energy_multiplier = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_base"]
+top_radius = 1.6
+bottom_radius = 1.9
+height = 0.35
+
+[sub_resource type="TorusMesh" id="TorusMesh_ring"]
+inner_radius = 2.9
+outer_radius = 3.2
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_post"]
+top_radius = 0.07
+bottom_radius = 0.09
+height = 1.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_board"]
+size = Vector3(2.1, 0.7, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_padlock"]
+size = Vector3(0.3, 0.3, 0.12)
+monitoring = true
+monitorable = true
+script = ExtResource("1_station")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_trigger")
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+mesh = SubResource("CylinderMesh_base")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+mesh = SubResource("TorusMesh_ring")
+surface_material_override/0 = SubResource("StandardMaterial3D_ring")
+
+[node name="Post" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+mesh = SubResource("CylinderMesh_post")
+
+[node name="Sign" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
+
+[node name="Board" type="MeshInstance3D" parent="Sign"]
+mesh = SubResource("BoxMesh_board")
+
+[node name="TitleLabel" type="Label3D" parent="Sign"]
+pixel_size = 0.004
+billboard = 1
+modulate = Color(1, 1, 1, 1)
+outline_size = 14
+text = "1.1 Introduction to Real Numbers"
+font_size = 44
+
+[node name="SubtitleLabel" type="Label3D" parent="Sign"]
+pixel_size = 0.004
+billboard = 1
+modulate = Color(0.98, 0.85, 0.55, 1)
+outline_size = 10
+text = "Tap Interact"
+font_size = 30
+position = Vector3(0, -0.5, 0)
+
+[node name="Padlock" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9, 0)
+mesh = SubResource("BoxMesh_padlock")
+surface_material_override/0 = SubResource("StandardMaterial3D_lock")
+visible = false
