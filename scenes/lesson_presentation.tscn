@@ -1,0 +1,165 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/lesson_presentation.gd" id="1_pres"]
+
+[node name="LessonPresentation" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pres")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Dim" type="ColorRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.03, 0.06, 0.72)
+
+[node name="Panel" type="PanelContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="Root/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TopBar" type="HBoxContainer" parent="Root/Panel/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="Root/Panel/Layout/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.96, 1, 1)
+theme_override_font_sizes/font_size = 19
+text = "Lesson"
+text_overrun_behavior = 3
+
+[node name="CloseButton" type="Button" parent="Root/Panel/Layout/TopBar"]
+custom_minimum_size = Vector2(104, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Exit X"
+
+[node name="SlideArea" type="Control" parent="Root/Panel/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Visual" type="Control" parent="Root/Panel/Layout/SlideArea"]
+layout_mode = 1
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 0.62
+grow_horizontal = 2
+
+[node name="CaptionBox" type="VBoxContainer" parent="Root/Panel/Layout/SlideArea/Visual"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 6.0
+offset_top = 4.0
+offset_right = -6.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_constants/separation = 4
+
+[node name="BulletsBox" type="VBoxContainer" parent="Root/Panel/Layout/SlideArea/Visual"]
+layout_mode = 1
+anchors_preset = 15
+anchor_top = 0.42
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 4.0
+offset_right = -6.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+
+[node name="AngelHolder" type="VBoxContainer" parent="Root/Panel/Layout/SlideArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_top = 0.64
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 6.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+
+[node name="AngelMood" type="Label" parent="Root/Panel/Layout/SlideArea/AngelHolder"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.72, 0.25, 1)
+theme_override_font_sizes/font_size = 14
+text = "Angel"
+
+[node name="Narration" type="Label" parent="Root/Panel/Layout/SlideArea/AngelHolder"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.93, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = ""
+autowrap_mode = 3
+
+[node name="Controls" type="HBoxContainer" parent="Root/Panel/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BackButton" type="Button" parent="Root/Panel/Layout/Controls"]
+custom_minimum_size = Vector2(84, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "< Back"
+
+[node name="ReplayButton" type="Button" parent="Root/Panel/Layout/Controls"]
+custom_minimum_size = Vector2(84, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Replay"
+
+[node name="PlayButton" type="Button" parent="Root/Panel/Layout/Controls"]
+custom_minimum_size = Vector2(84, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Pause"
+
+[node name="ProgressLabel" type="Label" parent="Root/Panel/Layout/Controls"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.6, 0.64, 0.78, 1)
+theme_override_font_sizes/font_size = 15
+text = "0 / 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NextButton" type="Button" parent="Root/Panel/Layout/Controls"]
+custom_minimum_size = Vector2(84, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Next >"

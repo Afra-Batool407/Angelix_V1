@@ -778,6 +778,9 @@ const TARGET_SCENE := "res://main.tscn"
 ## the 3D world. All other topics keep their current behavior.
 const LESSON_TOPIC := "math.u01.real-numbers"
 const LESSON_SCENE := "res://scenes/lesson.tscn"
+## Shared 2D presentation lesson (replaces the two Real Numbers routes;
+## lesson.tscn stays as the world-overlay fallback resource).
+const PRESENTATION_SCENE := "res://scenes/lesson_presentation.tscn"
 
 const SLIDE_TIME := 0.22
 
@@ -940,8 +943,14 @@ func _on_card_pressed(item_id: String) -> void:
 				_slide_to_state(MenuState.TOPICS)
 		MenuState.TOPICS:
 			if item_id == LESSON_TOPIC:
-				get_tree().change_scene_to_file(LESSON_SCENE)
+				# Verified Real Numbers card 1: shared 2D presentation lesson
+				# (replaces the old lesson.tscn scene switch; stable ID kept).
+				GameSession.selected_topic_id = item_id
+				get_tree().change_scene_to_file(PRESENTATION_SCENE)
 			elif item_id == TARGET_TOPIC:
+				# Verified Real Numbers card 2: enter AngelTown (3D route
+				# preserved); the world auto-opens the same presentation as a
+				# CanvasLayer overlay, keeping player position and state.
 				GameSession.selected_topic_id = item_id
 				get_tree().change_scene_to_file(TARGET_SCENE)
 

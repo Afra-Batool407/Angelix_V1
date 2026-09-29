@@ -645,3 +645,176 @@ if FAILURES:
     for f in FAILURES:
         print("FAIL ->", f)
     sys.exit(1)
+
+# ============================================================
+# Phase 6 checks (presentation lesson: slides schema + routes)
+# ============================================================
+def _p6(name, ok, detail=""):
+    check(name, ok, detail)
+
+
+SLIDE_ACTIONS = {"show_number_line", "mark_point", "highlight_interval",
+                 "show_caption", "reveal_bullets"}
+
+
+def validate_slides(slides, label):
+    errs = []
+    if not isinstance(slides, list) or not slides:
+        return [f"{label}: slides must be a non-empty array"]
+    seen_ids = set()
+    for i, s in enumerate(slides):
+        tag = f"{label}[{i}]"
+        if not isinstance(s, dict):
+            errs.append(f"{tag} not a dict")
+            continue
+        sid = s.get("id")
+        if not isinstance(sid, str) or not sid:
+            errs.append(f"{tag} missing id")
+            continue
+        if sid in seen_ids:
+            errs.append(f"{tag} duplicate id {sid}")
+        seen_ids.add(sid)
+        for field in ["narration", "caption"]:
+            if not isinstance(s.get(field), str) or not s.get(field, "").strip():
+                errs.append(f"{tag}({sid}) missing {field}")
+        cps = s.get("checkpoints")
+        if not isinstance(cps, list):
+            errs.append(f"{tag}({sid}) checkpoints not a list")
+            cps = []
+        for cp in cps:
+            if not isinstance(cp, dict):
+                errs.append(f"{tag}({sid}) checkpoint not a dict")
+                continue
+            for f in ["question", "hint", "correct_feedback", "retry_feedback"]:
+                if not isinstance(cp.get(f), str) or not cp.get(f, "").strip():
+                    errs.append(f"{tag}({sid}) checkpoint missing {f}")
+            answers = cp.get("accepted_answers")
+            if not isinstance(answers, list) or not answers or \
+                    not all(isinstance(a, str) and a.strip() for a in answers):
+                errs.append(f"{tag}({sid}) checkpoint accepted_answers invalid")
+        at_seen = -1.0
+        acts = s.get("animation_actions")
+        if not isinstance(acts, list) or not acts:
+            errs.append(f"{tag}({sid}) animation_actions must be a non-empty list")
+            continue
+        for act in acts:
+            if not isinstance(act, dict):
+                errs.append(f"{tag}({sid}) action not a dict")
+                continue
+            action = act.get("action")
+            if action not in SLIDE_ACTIONS:
+                errs.append(f"{tag}({sid}) unknown action {action!r}")
+                continue
+            at = act.get("at")
+            if not isinstance(at, (int, float)) or isinstance(at, bool) \
+                    or at != at or at < 0 or at in (float("inf"), float("-inf")):
+                errs.append(f"{tag}({sid}) {action} bad at")
+                continue
+            if at < at_seen:
+                errs.append(f"{tag}({sid}) actions out of order at {at}")
+            at_seen = at
+            if action in ("show_number_line", "highlight_interval"):
+                lo, hi = act.get("from"), act.get("to")
+                if not isinstance(lo, (int, float)) or not isinstance(hi, (int, float)) \
+                        or not hi > lo:
+                    errs.append(f"{tag}({sid}) {action} needs finite from<to")
+            elif action == "mark_point":
+                v, lab = act.get("value"), act.get("label")
+                if not isinstance(v, (int, float)) or isinstance(v, bool) \
+                        or v != v or not isinstance(lab, str) or not lab.strip():
+                    errs.append(f"{tag}({sid}) mark_point bad value/label")
+            elif action == "show_caption":
+                if not isinstance(act.get("text"), str) or not act.get("text", "").strip():
+                    errs.append(f"{tag}({sid}) show_caption empty")
+            elif action == "reveal_bullets":
+                items = act.get("items")
+                if not isinstance(items, list) or not items \
+                        or not all(isinstance(x, str) and x.strip() for x in items):
+                    errs.append(f"{tag}({sid}) reveal_bullets items invalid")
+    return errs
+
+
+TOPIC_IDS = ["math.u01.real-numbers",
+             "math.u01.real-numbers.rational-irrational-combination"]
+for tid in TOPIC_IDS:
+    tp = ROOT / f"content/topics/{tid}.json"
+    _p6(f"{tid}: topic file exists", tp.exists())
+    if not tp.exists():
+        continue
+    t = _json.loads(tp.read_text(encoding="utf-8"))
+    _p6(f"{tid}: topic_id matches file", t.get("topic_id") == tid, str(t.get("topic_id")))
+    _p6(f"{tid}: has title", bool(t.get("title")))
+    _p6(f"{tid}: practice >=1 scored item", len(t.get("practice", [])) >= 1,
+        str(len(t.get("practice", []))))
+    _p6(f"{tid}: exactly 3 quiz", len(t.get("quiz", [])) == 3)
+    for qi, q in enumerate(t.get("quiz", [])):
+        n = len(q.get("choices", []))
+        idx = q.get("correct_index", -1)
+        _p6(f"{tid}: quiz[{qi}] correct_index in range",
+            isinstance(idx, int) and 0 <= idx < n)
+    errs = validate_slides(t.get("slides"), tid)
+    _p6(f"{tid}: slides schema valid", not errs, "; ".join(errs[:4]))
+    # Slide citations must only reference OCR-checked pages.
+    bad_pages = []
+    for sp in t.get("source_pages", []):
+        if sp.get("pdf_page") not in {3, 5, 6, 7, 8}:
+            bad_pages.append(sp.get("pdf_page"))
+    _p6(f"{tid}: source pages OCR-verified", not bad_pages, str(bad_pages))
+
+# --- Routes and overlay wiring ---
+mn6 = (ROOT / "scripts/menu_controller.gd").read_text(encoding="utf-8")
+_p6("menu: presentation scene const added",
+    'const PRESENTATION_SCENE := "res://scenes/lesson_presentation.tscn"' in mn6)
+_p6("menu: card 1 routes to presentation",
+    "if item_id == LESSON_TOPIC:" in mn6 and "change_scene_to_file(PRESENTATION_SCENE)" in mn6)
+_p6("menu: card 2 keeps world route",
+    "elif item_id == TARGET_TOPIC:" in mn6
+    and mn6.count("change_scene_to_file(TARGET_SCENE)") == 1)
+_p6("menu: both cards record selection", mn6.count("GameSession.selected_topic_id = item_id") >= 2)
+_p6("menu: old lesson scene const kept (fallback resource)",
+    'const LESSON_SCENE := "res://scenes/lesson.tscn"' in mn6)
+_p6("menu: card 2 menu entry still enabled", mn6.count(
+    '"enabled": true},\n\t{"id": "math.u01.real-numbers.rational-irrational-combination"') == 1)
+
+wc6 = (ROOT / "scripts/world_controller.gd").read_text(encoding="utf-8")
+_p6("world: presentation consts present",
+    "const TOPIC_INTRO" in wc6 and "const TOPIC_COMBO" in wc6
+    and 'const PRESENTATION_SCENE := "res://scenes/lesson_presentation.tscn"' in wc6)
+_p6("world: verified topic ids exact",
+    'TOPIC_INTRO := "math.u01.real-numbers"' in wc6
+    and 'TOPIC_COMBO := "math.u01.real-numbers.rational-irrational-combination"' in wc6)
+_p6("world: auto-opens overlay for both cards",
+    "if selected == TOPIC_INTRO or selected == TOPIC_COMBO:" in wc6
+    and "_open_presentation(selected)" in wc6)
+_p6("world: overlay open/close keeps world alive (no change_scene in open)",
+    "change_scene" not in wc6.split("func _open_presentation")[1].split("func ")[1])
+_p6("world: presentation closes via existing close path",
+    "pres.presentation_finished.connect(_close_lesson)" in wc6)
+_p6("world: fallback to lesson overlay if presentation fails",
+    wc6.count("_open_lesson(topic_id)") == 2)
+_p6("world: station interact opens presentation",
+    "if _active_station != null and not _lesson_open:\n\t\t_open_presentation(" in wc6)
+
+pres_scene = (ROOT / "scenes/lesson_presentation.tscn").read_text(encoding="utf-8")
+_p6("presentation: references its controller script",
+    'path="res://scripts/lesson_presentation.gd"' in pres_scene)
+for node in ["CloseButton", "BackButton", "ReplayButton", "PlayButton",
+             "NextButton", "ProgressLabel", "Narration", "Visual",
+             "CaptionBox", "BulletsBox", "AngelMood"]:
+    _p6(f"presentation: has node {node}", f'name="{node}"' in pres_scene)
+pres_src = (ROOT / "scripts/lesson_presentation.gd").read_text(encoding="utf-8")
+_p6("presentation: validates slides before playing", "_validated_slides" in pres_src
+    and "push_error" in pres_src)
+_p6("presentation: uses only whitelisted actions",
+    all(a in pres_src for a in SLIDE_ACTIONS))
+_p6("presentation: draw_line 4-arg signature",
+    "draw_line(Vector2(" in pres_src and "LINE_THICKNESS)" in pres_src)
+_p6("presentation: offline (no network/API)", not [
+    f for f in ["HTTPRequest", "http_request", "api_key", "API_KEY"] if f in pres_src])
+
+print()
+print(f"TOTAL: {len(CHECKS)} checks, {len(FAILURES)} failed")
+if FAILURES:
+    for f in FAILURES:
+        print("FAIL ->", f)
+    sys.exit(1)

@@ -1,0 +1,313 @@
+{
+  "schema_version": 1,
+  "topic_id": "math.u01.real-numbers.rational-irrational-combination",
+  "title": "Combination of Rational and Irrational Numbers",
+  "language": "English with natural English-Roman Urdu code-switching (e.g. 'chalo', 'dekho', 'samajh aya?')",
+  "source_pages": [
+    {
+      "pdf_file": "page1-150.pdf",
+      "pdf_page": 3,
+      "printed_page": 1,
+      "sections": "1.1 Introduction to Real Numbers (unit intro); 1.1.1 Combination of Rational and Irrational Numbers (R = Q ∪ Q')",
+      "ocr_quality": "Good at 150 DPI; 300 DPI re-scan p-005 confirmed wording."
+    },
+    {
+      "pdf_file": "page1-150.pdf",
+      "pdf_page": 8,
+      "printed_page": 6,
+      "sections": "Example 3: converting recurring decimals to p/q form (0.5-bar = 5/9, 0.93-bar = 93/99 = 31/33); Example 4: two rational numbers between 2 and 3 are 5/2 and 11/4",
+      "ocr_quality": "Verified with 300 DPI re-scan: 5/2 and 11/4 confirmed."
+    }
+  ],
+  "explanation": "The real numbers are the combination of the rational numbers (Q) and the irrational numbers (Q'): R = Q ∪ Q'. A rational number is p/q with integers p, q and q ≠ 0; its decimal terminates (1/4 = 0.25) or repeats (0.333..., 0.939393...). An irrational number like pi = 3.14159..., e = 2.71828... or sqrt(2) = 1.41421... never terminates and never repeats. Together the two families fill the number line completely: every point is exactly one real number, with no gaps.",
+  "pakistani_life_example": "Shopping for cloth at the bazaar: 2.5 metres of fabric is a terminating decimal (rational), and Rs 480.50 per metre is rational too. But the diagonal of a square courtyard tile of side 1 m is sqrt(2) = 1.41421... metres — it never ends and never repeats (irrational). Both kinds sit together on the same measuring tape: R = Q ∪ Q'.",
+  "worked_example": {
+    "title": "Convert the recurring decimal 0.93-bar to p/q form (textbook Example 3)",
+    "steps": [
+      "Let x = 0.939393... (93 repeating).",
+      "Multiply by 100: 100x = 93.939393...",
+      "Subtract: 100x − x = 93.9393... − 0.9393..., so 99x = 93.",
+      "Solve: x = 93/99 = 31/33.",
+      "Check against the textbook: Example 3 lists 0.93-bar = 93/99 = 31/33."
+    ],
+    "answer": "0.93-bar = 93/99 = 31/33",
+    "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 8 (printed page 6), Example 3"
+  },
+  "practice": [
+    {
+      "id": "practice.half-bar-to-fraction",
+      "prompt": "Use the textbook's multiply-and-subtract method: write 0.5-bar (0.555...) in p/q form.",
+      "hint": "Example 3: let x = 0.555..., multiply by 10 so 10x = 5.555..., then subtract x.",
+      "solution": "x = 0.555...; 10x = 5.555...; 10x − x = 5, so 9x = 5 and x = 5/9. This matches Example 3's 0.5-bar = 5/9.",
+      "citation": "Method follows PCTB Mathematics-9, page1-150.pdf PDF page 8 (printed page 6), Example 3"
+    }
+  ],
+  "quiz": [
+    {
+      "id": "quiz.combination.q-prime",
+      "text": "R = Q ∪ Q′. Which numbers belong to Q′?",
+      "choices": [
+        "Rational numbers like 0.25",
+        "Irrational numbers like sqrt(2)",
+        "Only integers",
+        "Only natural numbers"
+      ],
+      "correct_index": 1,
+      "explanation": "Q' is the set of irrational numbers: decimals that never stop and never repeat, like sqrt(2) = 1.41421..., pi = 3.14159... and e = 2.71828.... Rationals like 0.25 belong to Q, not Q'.",
+      "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 3 (printed page 1) for R = Q ∪ Q'; PDF page 6 (printed page 4) for the irrational examples"
+    },
+    {
+      "id": "quiz.combination.half-bar",
+      "text": "The recurring decimal 0.5-bar (0.555...) equals:",
+      "choices": [
+        "5/10",
+        "5/9",
+        "1/2",
+        "55/100"
+      ],
+      "correct_index": 1,
+      "explanation": "Example 3's method: let x = 0.555..., then 10x = 5.555... Subtracting gives 9x = 5, so x = 5/9 — exactly as the book lists 0.5-bar = 5/9.",
+      "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 8 (printed page 6), Example 3"
+    },
+    {
+      "id": "quiz.combination.between-2-and-3",
+      "text": "Which pair of rational numbers between 2 and 3 does Example 4 list?",
+      "choices": [
+        "5/2 and 11/4",
+        "1/2 and 3/4",
+        "pi and e",
+        "sqrt(2) and sqrt(3)"
+      ],
+      "correct_index": 0,
+      "explanation": "Example 4: two rational numbers between 2 and 3 are 5/2 = 2.5 and 11/4 = 2.75. Pi, e, sqrt(2) and sqrt(3) are irrational, so they are not the answer.",
+      "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 8 (printed page 6), Example 4"
+    }
+  ],
+  "angel_replies": [
+    {
+      "id": "angel.u01.combo.welcome",
+      "intent": "explain_again",
+      "mood": "happy",
+      "text": "Chalo, dobara dekho! R = Q union Q-prime: rationals (decimals that stop or repeat) plus irrationals (decimals that never stop and never repeat). The line is full — no gaps!"
+    },
+    {
+      "id": "angel.u01.combo.hint",
+      "intent": "give_hint",
+      "mood": "thinking",
+      "text": "Hint: for a recurring decimal, let it equal x, multiply by 10 or 100 to shift the pattern, subtract, then divide. Try it on 0.555... first."
+    },
+    {
+      "id": "angel.u01.combo.quiz",
+      "intent": "quiz_me",
+      "mood": "excited",
+      "text": "Test ready! Three questions: Q-prime ka matlab, 0.5-bar as a fraction, and Example 4's two rationals between 2 and 3. Bismillah!"
+    },
+    {
+      "id": "angel.u01.combo.wrong",
+      "intent": "why_wrong",
+      "mood": "thinking",
+      "text": "Koi baat nahi! Check two things: does the decimal stop or repeat (that makes it rational), and did you shift the pattern by the right power of 10 before subtracting?"
+    },
+    {
+      "id": "angel.u01.combo.encourage",
+      "intent": "encouragement",
+      "mood": "happy",
+      "text": "Himmat rakho! Example 3 ka method bas teen steps hai: shift, subtract, divide. Ek aur try — main saath hoon."
+    },
+    {
+      "id": "angel.u01.combo.smalltalk",
+      "intent": "smalltalk",
+      "mood": "happy",
+      "text": "Main Angel hoon — aapki numbers wali dost! Salam! Ready ho to slides chalao ya 'test lo' keh do."
+    }
+  ],
+  "slides": [
+    {
+      "id": "s1-union",
+      "narration": "Dekho, R = Q union Q-prime! Q holds the rationals — p/q numbers whose decimals stop or repeat. Q-prime holds the irrationals — pi, e, sqrt(2), never ending, never repeating. Union karo, and the number line is completely full: every point is exactly one real number. (PCTB Mathematics-9, PDF page 3, printed page 1)",
+      "caption": "R = Q ∪ Q′",
+      "animation_actions": [
+        {
+          "action": "show_number_line",
+          "at": 0.0,
+          "from": -3.0,
+          "to": 3.0
+        },
+        {
+          "action": "show_caption",
+          "at": 0.5,
+          "text": "R = Q ∪ Q′"
+        },
+        {
+          "action": "reveal_bullets",
+          "at": 1.5,
+          "items": [
+            "Q: rationals — p/q, decimals stop or repeat",
+            "Q′: irrationals — never stop, never repeat",
+            "Together they fill the line with no gaps"
+          ]
+        }
+      ],
+      "checkpoints": [
+        {
+          "question": "R is the union of Q and Q′. What lives in Q′?",
+          "accepted_answers": [
+            "irrational numbers",
+            "irrationals",
+            "irrational",
+            "q prime numbers",
+            "the irrationals"
+          ],
+          "hint": "Q holds the p/q numbers. Q′ is the other family on the line.",
+          "correct_feedback": "Irrational numbers — like pi, e, sqrt(2) (PDF page 3).",
+          "retry_feedback": "Q′ is what is NOT rational: the never-ending, never-repeating numbers."
+        }
+      ]
+    },
+    {
+      "id": "s2-recurring",
+      "narration": "Repeating decimals are rational! Example 3: x = 0.555..., multiply by 10: 10x = 5.555..., subtract: 9x = 5, so x = 5/9. Same trick with two repeating digits: 0.939393... = 0.93-bar = 93/99 = 31/33. Shift, subtract, divide! (PCTB Mathematics-9, PDF page 8, printed page 6)",
+      "caption": "Repeating decimals are rational",
+      "animation_actions": [
+        {
+          "action": "show_number_line",
+          "at": 0.0,
+          "from": 0.0,
+          "to": 1.0
+        },
+        {
+          "action": "mark_point",
+          "at": 1.0,
+          "value": 0.555,
+          "label": "0.5-bar = 5/9"
+        },
+        {
+          "action": "mark_point",
+          "at": 2.0,
+          "value": 0.939,
+          "label": "0.93-bar = 31/33"
+        },
+        {
+          "action": "show_caption",
+          "at": 3.0,
+          "text": "Multiply, subtract, divide"
+        }
+      ],
+      "checkpoints": [
+        {
+          "question": "0.555... = 0.5-bar. What is it as p/q?",
+          "accepted_answers": [
+            "5/9",
+            "5 over 9",
+            "5 upon 9",
+            "five ninths",
+            "5 / 9"
+          ],
+          "hint": "Example 3: multiply by 10, subtract the original, solve 9x = 5.",
+          "correct_feedback": "5/9 — 10x = 5.555..., minus x gives 9x = 5 (PDF page 8).",
+          "retry_feedback": "Set x = 0.555... Then 10x − x = 5. So x = 5/?"
+        }
+      ]
+    },
+    {
+      "id": "s3-between",
+      "caption": "Two rationals between 2 and 3",
+      "narration": "Rationals are dense — between any two you find more! Example 4: two rational numbers between 2 and 3 are 5/2 = 2.5 and 11/4 = 2.75. Halves aur quarters — infinitely many exist. (PCTB Mathematics-9, PDF page 8, printed page 6)",
+      "animation_actions": [
+        {
+          "action": "show_number_line",
+          "at": 0.0,
+          "from": 1.0,
+          "to": 4.0
+        },
+        {
+          "action": "mark_point",
+          "at": 1.0,
+          "value": 2.0,
+          "label": "2"
+        },
+        {
+          "action": "mark_point",
+          "at": 1.8,
+          "value": 2.5,
+          "label": "5/2"
+        },
+        {
+          "action": "mark_point",
+          "at": 2.6,
+          "value": 2.75,
+          "label": "11/4"
+        },
+        {
+          "action": "mark_point",
+          "at": 3.4,
+          "value": 3.0,
+          "label": "3"
+        },
+        {
+          "action": "show_caption",
+          "at": 4.2,
+          "text": "Example 4: 5/2 and 11/4"
+        }
+      ],
+      "checkpoints": [
+        {
+          "question": "Name one rational number between 2 and 3 from the textbook.",
+          "accepted_answers": [
+            "5/2",
+            "11/4",
+            "2.5",
+            "2.75",
+            "five halves",
+            "eleven quarters",
+            "5 / 2",
+            "11 / 4"
+          ],
+          "hint": "Example 4 lists two: one is 2.5 as a fraction.",
+          "correct_feedback": "5/2 = 2.5 and 11/4 = 2.75 both work (Example 4, PDF page 8).",
+          "retry_feedback": "Try odd numerators over 2 or 4 between 8 and 12 — like 11/4."
+        }
+      ]
+    },
+    {
+      "id": "s4-summary",
+      "narration": "Recap: R = Q union Q-prime. Terminating or repeating = rational. Forever with no pattern = irrational. Bazaar ki tape par dono saath-saath — 2.5 metres of cloth and a sqrt(2) ribbon. Ab teen sawalon ka quiz! (PCTB Mathematics-9, PDF pages 3-8)",
+      "caption": "One line, two families",
+      "animation_actions": [
+        {
+          "action": "show_number_line",
+          "at": 0.0,
+          "from": -2.0,
+          "to": 3.0
+        },
+        {
+          "action": "mark_point",
+          "at": 1.0,
+          "value": 2.5,
+          "label": "2.5 m cloth"
+        },
+        {
+          "action": "mark_point",
+          "at": 2.0,
+          "value": 1.414,
+          "label": "sqrt(2) ribbon"
+        },
+        {
+          "action": "show_caption",
+          "at": 2.8,
+          "text": "R = Q ∪ Q′"
+        },
+        {
+          "action": "reveal_bullets",
+          "at": 3.5,
+          "items": [
+            "Stop or repeat → rational (Q)",
+            "Forever, no pattern → irrational (Q′)",
+            "Next: the three-question quiz!"
+          ]
+        }
+      ],
+      "checkpoints": []
+    }
+  ]
+}

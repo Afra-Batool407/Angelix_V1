@@ -10,6 +10,13 @@ extends Node3D
 
 const MENU_SCENE := "res://scenes/ui_menu.tscn"
 const LESSON_SCENE := "res://scenes/lesson.tscn"
+## Shared 2D presentation lesson overlay (the two Real Numbers routes use
+## this; the running world stays active underneath — player position and
+## world state are preserved).
+const PRESENTATION_SCENE := "res://scenes/lesson_presentation.tscn"
+## Topic IDs of the two verified Real Numbers presentation cards.
+const TOPIC_INTRO := "math.u01.real-numbers"
+const TOPIC_COMBO := "math.u01.real-numbers.rational-irrational-combination"
 const PLAYER_SCENE := "res://scenes/player.tscn"
 const HUB_SPAWN := Vector3(0, 6, 8)
 const DEFAULT_STATION_POS := Vector3(8, 6, 2)
@@ -52,6 +59,7 @@ var _stations: Array = []
 var _active_station: LearningStation = null
 var _lesson_open := false
 var _lesson_instance: Control = null
+var _presentation_instance: LessonPresentation = null
 
 
 func _ready() -> void:
@@ -85,6 +93,11 @@ func _setup_day_night() -> void:
 ## station family, start in station mode with the activity visible.
 func _apply_topic_selection() -> void:
 	var selected := GameSession.selected_topic_id
+	if selected == TOPIC_INTRO or selected == TOPIC_COMBO:
+		# Verified Real Numbers cards: auto-open the shared presentation
+		# overlay over the running world (position and world state kept).
+		_open_presentation(selected)
+		return
 	if selected != "" and GameSession.matches_station(selected, "math.u01.real-numbers"):
 		_set_activity_active(true)
 
@@ -270,6 +283,9 @@ func _close_lesson() -> void:
 	if not _lesson_open:
 		return
 	_overlay_root.visible = false
+	if is_instance_valid(_presentation_instance):
+		_presentation_instance.queue_free()
+	_presentation_instance = null
 	if is_instance_valid(_lesson_instance):
 		_lesson_instance.queue_free()
 	_lesson_instance = null
@@ -297,6 +313,35 @@ func _close_lesson() -> void:
 
 func is_lesson_open() -> bool:
 	return _lesson_open
+
+
+## Opens the shared 2D presentation overlay over the running world. World,
+## player and Angel stay alive underneath; movement is locked while open.
+## Falls back to the classic lesson overlay if the presentation cannot load.
+func _open_presentation(topic_id: String) -> void:
+	if _lesson_open or not GameSession.has_topic_content(topic_id):
+		return
+	var packed: PackedScene = load(PRESENTATION_SCENE)
+	if packed == null:
+		push_error("WorldController: presentation scene missing; using lesson overlay")
+		_open_lesson(topic_id)
+		return
+	var pres := packed.instantiate() as LessonPresentation
+	if pres == null:
+		push_error("WorldController: presentation instantiate failed; using lesson overlay")
+		_open_lesson(topic_id)
+		return
+	pres.add_to_group(LESSON_OVERLAY_GROUP)
+	_overlay_holder.add_child(pres)
+	pres.presentation_finished.connect(_close_lesson)
+	_presentation_instance = pres
+	_lesson_open = true
+	_overlay_root.visible = true
+	pres.start_presentation(topic_id)
+	if _player != null:
+		_player.locked = true
+	_set_activity_active(false)
+	_refresh_prompt()
 
 
 # ------------------------------------------------------------------- hud
@@ -365,7 +410,7 @@ func _update_xp_hud() -> void:
 
 func _on_interact_pressed() -> void:
 	if _active_station != null and not _lesson_open:
-		_open_lesson(_active_station.topic_id)
+		_open_presentation(_active_station.topic_id)
 
 
 func _go_to_menu() -> void:

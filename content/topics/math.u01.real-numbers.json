@@ -254,5 +254,237 @@
         "citation": "PCTB Mathematics-9, page1-150.pdf PDF page 3 (printed page 1), Section 1.1.1"
       }
     ]
-  }
+  },
+  "slides": [
+    {
+      "id": "s1-welcome",
+      "narration": "Chalo, dekho! Real numbers R are ALL the numbers on the number line: rational numbers Q, which can be written as p/q with q not 0, and irrational numbers Q-prime, whose decimals never stop and never repeat. Together R = Q union Q-prime — every point on the line is exactly one real number, no gaps. (PCTB Mathematics-9, PDF page 3, printed page 1)",
+      "caption": "Real Numbers: R = Q ∪ Q′",
+      "animation_actions": [
+        {
+          "action": "show_number_line",
+          "at": 0.0,
+          "from": -3.0,
+          "to": 3.0
+        },
+        {
+          "action": "show_caption",
+          "at": 0.5,
+          "text": "R = Q ∪ Q′"
+        },
+        {
+          "action": "reveal_bullets",
+          "at": 1.5,
+          "items": [
+            "Rational numbers (Q): p/q form, q ≠ 0",
+            "Irrational numbers (Q′): never repeat, never stop",
+            "Every point on the line is one real number"
+          ]
+        }
+      ],
+      "checkpoints": [
+        {
+          "question": "Which two families of numbers together form the real numbers (R)?",
+          "accepted_answers": [
+            "rational and irrational numbers",
+            "rational and irrational",
+            "q and q'",
+            "q and q prime",
+            "rational, irrational",
+            "rational numbers and irrational numbers"
+          ],
+          "hint": "Look at the big line on the slide: R = Q ∪ Q′. Name both sets.",
+          "correct_feedback": "Exactly! R = Q ∪ Q′ — rationals plus irrationals (PDF page 3).",
+          "retry_feedback": "Look at the slide's big line: R = Q ∪ Q′. Name both families."
+        }
+      ]
+    },
+    {
+      "id": "s2-rational",
+      "narration": "A rational number's decimal either terminates — it stops: 1/4 = 0.25, 3/8 = 0.375, 4/5 = 0.8 — or it repeats a pattern forever, like 0.333... and 0.939393... Dono rational hain. (PCTB Mathematics-9, PDF pages 5-6, printed pages 3-4)",
+      "caption": "Rational numbers stop or repeat",
+      "animation_actions": [
+        {
+          "action": "show_number_line",
+          "at": 0.0,
+          "from": -1.0,
+          "to": 2.0
+        },
+        {
+          "action": "mark_point",
+          "at": 1.0,
+          "value": 0.25,
+          "label": "1/4 = 0.25"
+        },
+        {
+          "action": "mark_point",
+          "at": 2.0,
+          "value": 0.375,
+          "label": "3/8 = 0.375"
+        },
+        {
+          "action": "show_caption",
+          "at": 3.0,
+          "text": "0.333... repeats forever — still rational!"
+        }
+      ],
+      "checkpoints": [
+        {
+          "question": "Is 0.25 a rational or an irrational number — and why?",
+          "accepted_answers": [
+            "rational",
+            "rational because it terminates",
+            "terminating decimal",
+            "rational, it stops",
+            "rational number",
+            "rational because it stops"
+          ],
+          "hint": "0.25 = 1/4. Does its decimal stop or go on forever?",
+          "correct_feedback": "Rational — 0.25 = 1/4 is a terminating decimal (PDF page 5).",
+          "retry_feedback": "Remember: terminating or repeating = rational. 0.25 stops after two digits."
+        }
+      ]
+    },
+    {
+      "id": "s3-irrational",
+      "narration": "An irrational number cannot be written as p/q. Its decimal goes on forever with no repeating pattern: pi = 3.14159..., e = 2.71828..., and sqrt(2) = 1.41421... Kabhi khatam nahi hote, kabhi repeat nahi hote. (PCTB Mathematics-9, PDF page 6, printed page 4)",
+      "caption": "Irrational numbers never repeat",
+      "animation_actions": [
+        {
+          "action": "show_number_line",
+          "at": 0.0,
+          "from": 1.0,
+          "to": 4.0
+        },
+        {
+          "action": "mark_point",
+          "at": 1.0,
+          "value": 1.414,
+          "label": "sqrt(2) = 1.41421..."
+        },
+        {
+          "action": "show_caption",
+          "at": 2.5,
+          "text": "pi, e, sqrt(2): no pattern, no end"
+        }
+      ],
+      "checkpoints": [
+        {
+          "question": "Which of these is irrational: 0.25, 0.333..., or sqrt(2)?",
+          "accepted_answers": [
+            "sqrt(2)",
+            "sqrt2",
+            "root 2",
+            "√2",
+            "the third one",
+            "1.41421",
+            "1.414"
+          ],
+          "hint": "Two of them stop or repeat a pattern. One goes on forever with no pattern.",
+          "correct_feedback": "Yes! sqrt(2) = 1.41421... never repeats (PDF page 6).",
+          "retry_feedback": "0.25 stops and 0.333... repeats. Which one never repeats?"
+        }
+      ]
+    },
+    {
+      "id": "s4-sqrt5",
+      "narration": "Textbook Example 2: to locate sqrt(5) = 2.236..., draw OA = 2 units along the line and AB = 1 unit perpendicular at A. Pythagoras gives mOB = sqrt(5). Draw an arc with centre O and radius mOB — it meets the line at P, so |OP| = sqrt(5). (PCTB Mathematics-9, PDF page 7, printed page 5)",
+      "caption": "Textbook Example 2: locating sqrt(5)",
+      "animation_actions": [
+        {
+          "action": "show_number_line",
+          "at": 0.0,
+          "from": 0.0,
+          "to": 3.0
+        },
+        {
+          "action": "mark_point",
+          "at": 1.0,
+          "value": 0.0,
+          "label": "O"
+        },
+        {
+          "action": "mark_point",
+          "at": 2.0,
+          "value": 2.0,
+          "label": "A"
+        },
+        {
+          "action": "highlight_interval",
+          "at": 3.0,
+          "from": 2.0,
+          "to": 2.236
+        },
+        {
+          "action": "mark_point",
+          "at": 3.6,
+          "value": 2.236,
+          "label": "P: sqrt(5)"
+        },
+        {
+          "action": "show_caption",
+          "at": 4.5,
+          "text": "Triangle OAB: sides 2 and 1"
+        }
+      ],
+      "checkpoints": [
+        {
+          "question": "Which two sides does the textbook draw to locate sqrt(5)?",
+          "accepted_answers": [
+            "2 and 1",
+            "oa and ab",
+            "oa=2 and ab=1",
+            "2 units and 1 unit",
+            "oa 2 ab 1",
+            "oa = 2, ab = 1",
+            "two units and one unit",
+            "oa = 2 and ab = 1"
+          ],
+          "hint": "The triangle sits at A = 2 on the line. How long is each side?",
+          "correct_feedback": "Right — mOA = 2 units on the line, mAB = 1 unit perpendicular (Example 2, PDF page 7).",
+          "retry_feedback": "Look at the labels: one side lies on the line up to A, one goes up. The lengths are 2 and 1."
+        }
+      ]
+    },
+    {
+      "id": "s5-summary",
+      "narration": "Recap: terminating or repeating decimal = rational; forever with no pattern = irrational. Bazaar mein kapda 2.5 metres — rational. A ribbon's sqrt(2) diagonal — irrational. Both live on the same measuring tape: the real number line. Ab quiz time! (PCTB Mathematics-9, PDF pages 5-8)",
+      "caption": "R = Q ∪ Q′ — no gaps",
+      "animation_actions": [
+        {
+          "action": "show_number_line",
+          "at": 0.0,
+          "from": -2.0,
+          "to": 3.0
+        },
+        {
+          "action": "mark_point",
+          "at": 1.2,
+          "value": 2.5,
+          "label": "2.5 m cloth"
+        },
+        {
+          "action": "mark_point",
+          "at": 2.2,
+          "value": 1.414,
+          "label": "sqrt(2) ribbon"
+        },
+        {
+          "action": "show_caption",
+          "at": 2.8,
+          "text": "One tape: rationals + irrationals"
+        },
+        {
+          "action": "reveal_bullets",
+          "at": 3.5,
+          "items": [
+            "Terminating or repeating → rational",
+            "Forever, no pattern → irrational",
+            "Next: the three-question quiz!"
+          ]
+        }
+      ],
+      "checkpoints": []
+    }
+  ]
 }
