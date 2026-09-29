@@ -20,7 +20,7 @@ func _draw() -> void:
 	# North marker (world -Z). Screen-up is camera-forward, so north sits at
 	# angle -(player_yaw) from up.
 	var north := Vector2.UP.rotated(-player_yaw)
-	draw_line(c, c + north * (r * 0.45), c + north * (r * 0.85), Color(0.95, 0.4, 0.4), 3.0)
+	draw_line(c + north * (r * 0.45), c + north * (r * 0.85), Color(0.95, 0.4, 0.4), 3.0)
 	draw_string(ThemeDB.fallback_font, c + north * r * 0.6 + Vector2(-4, -8), "N",
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.95, 0.5, 0.5))
 	# Nearest-target needle

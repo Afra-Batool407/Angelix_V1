@@ -77,7 +77,7 @@ func _sample(hour: float) -> Array:
 		var a: Array = KEYS[i]
 		var b: Array = KEYS[i + 1]
 		if hour >= float(a[0]) and hour <= float(b[0]):
-			var t := (hour - float(a[0])) / max(float(b[0]) - float(a[0]), 0.001)
+			var t: float = (hour - float(a[0])) / max(float(b[0]) - float(a[0]), 0.001)
 			return [
 				(a[1] as Color).lerp(b[1], t),
 				(a[2] as Color).lerp(b[2], t),

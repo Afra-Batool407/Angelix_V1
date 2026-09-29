@@ -483,7 +483,7 @@ class AngelFollower:
 			_angel.global_position = goal + Vector3(0, 2.0, 0)
 			return
 		var speed := FOLLOW_SPEED if dist < CATCHUP_DIST else CATCHUP_SPEED
-		var dir := to_goal / max(dist, 0.001)
+		var dir: Vector3 = to_goal / max(dist, 0.001)
 		# Push the Angel's velocity horizontally; its own hover physics
 		# (angel.gd) keeps it at the right height with a gentle bob.
 		_angel.velocity.x = dir.x * speed

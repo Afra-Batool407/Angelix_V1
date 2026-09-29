@@ -161,7 +161,7 @@ func _build_paths() -> void:
 		var b := Vector2(b3.x, b3.z)
 		var steps := int(a.distance_to(b) / 2.2)
 		for i in steps + 1:
-			var t := float(i) / max(steps, 1)
+			var t: float = float(i) / max(steps, 1)
 			var p := a.lerp(b, t)
 			var slab_node := MeshInstance3D.new()
 			slab_node.mesh = slab

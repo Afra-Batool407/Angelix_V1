@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  validate:
+  offline:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -30,3 +30,25 @@ jobs:
             gdparse "$f" || fail=1
           done < <(git ls-files '*.gd')
           exit $fail
+
+  godot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch Godot 4.7.2 headless
+        run: |
+          curl -sL --retry 3 -o /tmp/godot.zip \
+            https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -o -q /tmp/godot.zip -d /tmp
+          chmod +x /tmp/Godot_v4.7.2-stable_linux.x86_64
+
+      - name: Import project (build class/resource cache)
+        run: /tmp/Godot_v4.7.2-stable_linux.x86_64 --headless --path . --import
+
+      - name: Compile-check every GDScript with real Godot
+        run: /tmp/Godot_v4.7.2-stable_linux.x86_64 --headless --path . --script tools/check_all_scripts.gd
+
+      - name: Load and instantiate every scene with real Godot
+        run: /tmp/Godot_v4.7.2-stable_linux.x86_64 --headless --path . --script tools/load_all_scenes.gd

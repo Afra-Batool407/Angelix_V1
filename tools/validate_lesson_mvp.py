@@ -183,7 +183,8 @@ def gdscript_calls(src: str):
 
 
 for script in ["scripts/lesson.gd", "scripts/lesson_renderer.gd",
-               "scripts/angel_brain.gd", "scripts/learning_progress.gd"]:
+               "scripts/angel_brain.gd", "scripts/learning_progress.gd",
+               "tools/load_all_scenes.gd", "tools/check_all_scripts.gd"]:
     p = ROOT / script
     check(f"{script} exists", p.exists())
     if not p.exists():
