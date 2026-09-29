@@ -1,0 +1,32 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install gdtoolkit
+        run: pip install "gdtoolkit==4.*"
+
+      - name: Run lesson MVP validator (content, scenes, wiring)
+        run: python3 tools/validate_lesson_mvp.py
+
+      - name: gdparse all GDScript
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            gdparse "$f" || fail=1
+          done < <(git ls-files '*.gd')
+          exit $fail
