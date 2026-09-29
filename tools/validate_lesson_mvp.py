@@ -554,3 +554,93 @@ if FAILURES:
     for f in FAILURES:
         print("FAIL ->", f)
     sys.exit(1)
+
+# ============================================================
+# Phase 5 checks (scene structural integrity - Godot .tscn format)
+# Catches the fault class seen when a scene file loses its root node
+# (Godot error: "root node CollisionShape3D cannot specify a parent"):
+#   - first [node] must be the root: no parent= attribute
+#   - exactly one parentless node per scene
+#   - every child declared after its parent, parent path resolvable
+#   - no duplicate node paths
+#   - load_steps == ext_resources + sub_resources + 1
+#   - SubResource/ExtResource id references resolve
+#   - every ext_resource path exists on disk
+# ============================================================
+NODE_RE = re.compile(r"^\[node ([^\]]*)\]\s*$", re.M)
+ATTR_RE = re.compile(r'([a-z_]+)="([^"]*)"')
+SUBREF_RE = re.compile(r'SubResource\("([^"]+)"\)')
+EXTREF_RE = re.compile(r'ExtResource\("([^"]+)"\)')
+
+
+def _p5(name, ok, detail=""):
+    check(name, ok, detail)
+
+
+for scene_rel in sorted(str(q) for q in ROOT.rglob("*.tscn")):
+    scene_src = (ROOT / scene_rel).read_text(encoding="utf-8")
+    tag = scene_rel
+    _p5(f"{tag}: starts with [gd_scene header", scene_src.startswith("[gd_scene "))
+
+    nodes = []
+    for m in NODE_RE.finditer(scene_src):
+        attrs = dict(ATTR_RE.findall(m.group(1)))
+        nodes.append((attrs.get("name", "?"), attrs.get("type"),
+                      attrs.get("parent"), "instance=" in m.group(1)))
+    _p5(f"{tag}: has node entries", len(nodes) > 0)
+
+    if nodes:
+        _p5(f"{tag}: root node has no parent attr", nodes[0][2] is None,
+            str(nodes[0]))
+        root_count = len([n for n in nodes if n[2] is None])
+        _p5(f"{tag}: exactly one root node", root_count == 1,
+            f"{root_count} parentless nodes")
+        _p5(f"{tag}: root has type or instance",
+            nodes[0][1] is not None or nodes[0][3], str(nodes[0]))
+
+        declared = set()
+        seen_paths = set()
+        ordered_ok = True
+        first_bad = ""
+        duplicate = ""
+        for name, _typ, parent, _inst in nodes:
+            if parent is None or parent == ".":
+                full = name
+            elif parent in declared:
+                full = f"{parent}/{name}"
+            else:
+                ordered_ok = False
+                first_bad = f"'{name}' parent='{parent}'"
+                full = f"{parent}/{name}"
+            if full in seen_paths and not duplicate:
+                duplicate = full
+            seen_paths.add(full)
+            declared.add(full)
+        _p5(f"{tag}: children declared after parents", ordered_ok, first_bad)
+        _p5(f"{tag}: unique node paths", not duplicate, duplicate)
+
+    ext_n = scene_src.count("[ext_resource ")
+    sub_n = scene_src.count("[sub_resource ")
+    m = re.search(r"load_steps=(\d+)", scene_src)
+    if m:
+        _p5(f"{tag}: load_steps == ext+sub+1", int(m.group(1)) == ext_n + sub_n + 1,
+            f"steps={m.group(1)} ext={ext_n} sub={sub_n}")
+
+    declared_sub_ids = set(re.findall(
+        r'\[sub_resource type="[^"]*" id="([^"]+)"', scene_src))
+    declared_ext_ids = set(re.findall(
+        r'\[ext_resource type="[^"]*" path="[^"]*" id="([^"]+)"', scene_src))
+    for rid in sorted(set(SUBREF_RE.findall(scene_src))):
+        _p5(f"{tag}: SubResource '{rid}' declared", rid in declared_sub_ids)
+    for rid in sorted(set(EXTREF_RE.findall(scene_src))):
+        _p5(f"{tag}: ExtResource '{rid}' declared", rid in declared_ext_ids)
+    for em in re.finditer(r'\[ext_resource type="([^"]*)" path="([^"]*)"', scene_src):
+        fs = ROOT / em.group(2).removeprefix("res://")
+        _p5(f"{tag}: ext path exists {em.group(2)}", fs.exists())
+
+print()
+print(f"TOTAL: {len(CHECKS)} checks, {len(FAILURES)} failed")
+if FAILURES:
+    for f in FAILURES:
+        print("FAIL ->", f)
+    sys.exit(1)
