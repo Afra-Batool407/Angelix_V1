@@ -76,6 +76,13 @@ func _sanitize_entry(entry: Dictionary, topic_id: String) -> Dictionary:
 		"xp": maxi(0, int(entry.get("xp", 0))),
 		"first_completion_rewarded": bool(entry.get("first_completion_rewarded", false)),
 		"mastery_rewarded": bool(entry.get("mastery_rewarded", false)),
+		# v2 presentation fields (additive, safe migration): understanding
+		# score components from the presentation lesson. Missing = 0/false.
+		"latest_understanding": clampi(int(entry.get("latest_understanding", 0)), 0, 100),
+		"best_understanding": clampi(int(entry.get("best_understanding", 0)), 0, 100),
+		"last_understanding_quiz_percent": clampi(int(entry.get("last_understanding_quiz_percent", 0)), 0, 100),
+		"last_understanding_practice_percent": clampi(int(entry.get("last_understanding_practice_percent", 0)), 0, 100),
+		"last_understanding_ms": maxi(0, int(entry.get("last_understanding_ms", 0))),
 	}
 
 
@@ -102,6 +109,10 @@ func save_progress() -> bool:
 func get_topic(topic_id: String) -> Dictionary:
 	if _topics.has(topic_id):
 		return _topics[topic_id]
+	# Fresh topics get the FULL sanitized field set: record_attempt reads
+	# reward flags with direct [] access, so a partial default would abort
+	# the very first attempt on a fresh topic (caught by the runtime smoke
+	# test; previously attempt_count/XP were silently lost on first try).
 	return {
 		"topic_id": topic_id,
 		"attempt_count": 0,
@@ -109,6 +120,15 @@ func get_topic(topic_id: String) -> Dictionary:
 		"best_score": 0,
 		"mastered": false,
 		"last_attempt_ms": 0,
+		"activity_done": false,
+		"xp": 0,
+		"first_completion_rewarded": false,
+		"mastery_rewarded": false,
+		"latest_understanding": 0,
+		"best_understanding": 0,
+		"last_understanding_quiz_percent": 0,
+		"last_understanding_practice_percent": 0,
+		"last_understanding_ms": 0,
 	}
 
 
@@ -167,3 +187,24 @@ func get_total_stars() -> int:
 		if bool(_topics[topic_id].get("mastered", false)):
 			stars += 1
 	return stars
+
+
+## Persists one presentation-lesson understanding result (0..100 percent and
+## its quiz/practice components). The attempt itself is counted by
+## record_attempt; this method only updates the understanding fields, so
+## retries can never double-count attempts or re-grant rewards.
+func record_understanding(topic_id: String, quiz_percent: int,
+		practice_percent: int, understanding_percent: int) -> Dictionary:
+	var entry := get_topic(topic_id)
+	var quiz := clampi(quiz_percent, 0, 100)
+	var practice := clampi(practice_percent, 0, 100)
+	var understanding := clampi(understanding_percent, 0, 100)
+	entry["latest_understanding"] = understanding
+	entry["best_understanding"] = maxi(
+		int(entry.get("best_understanding", 0)), understanding)
+	entry["last_understanding_quiz_percent"] = quiz
+	entry["last_understanding_practice_percent"] = practice
+	entry["last_understanding_ms"] = int(Time.get_unix_time_from_system() * 1000.0)
+	_topics[topic_id] = entry
+	save_progress()
+	return entry

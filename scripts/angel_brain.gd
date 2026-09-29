@@ -206,3 +206,37 @@ func _context_line(intent: String, context: Dictionary) -> String:
 			return "Aap Urdu ya English mein likh sakti hain."
 		_:
 			return ""
+
+
+## ---------------------------------------------------------------- checkpoints
+## Checkpoint answer matching for the presentation lesson. Normalizes
+## English/Roman Urdu input, matches against the checkpoint's reviewed
+## accepted_answers, and returns the checkpoint's own feedback text. Unknown
+## answers get the reviewed retry feedback — never a fabricated explanation.
+func check_checkpoint_answer(answer: String, checkpoint: Dictionary) -> Dictionary:
+	var norm := _normalize_answer(answer)
+	if norm.is_empty():
+		return {"correct": false, "mood": "neutral",
+			"text": String(checkpoint.get("retry_feedback",
+				"Kuch likho — try again!"))}
+	for accepted: Variant in (checkpoint.get("accepted_answers", []) as Array):
+		if accepted is String and _answer_matches(norm, _normalize_answer(accepted)):
+			return {"correct": true, "mood": "happy",
+				"text": String(checkpoint.get("correct_feedback", ""))}
+	return {"correct": false, "mood": "thinking",
+		"text": String(checkpoint.get("retry_feedback", ""))}
+
+
+func _normalize_answer(answer: String) -> String:
+	var norm := answer.to_lower().strip_edges()
+	for ch: String in [",", "?", "!", ".", ";", ":", "\"", "'"]:
+		norm = norm.replace(ch, " ")
+	while norm.contains("  "):
+		norm = norm.replace("  ", " ")
+	return norm.strip_edges()
+
+
+func _answer_matches(answer: String, accepted: String) -> bool:
+	if accepted.is_empty():
+		return false
+	return answer == accepted or answer.contains(accepted) or accepted.contains(answer)

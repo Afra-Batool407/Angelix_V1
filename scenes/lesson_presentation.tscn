@@ -113,11 +113,35 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 4
 
-[node name="AngelMood" type="Label" parent="Root/Panel/Layout/SlideArea/AngelHolder"]
+[node name="PresenterPivot" type="Control" parent="Root/Panel/Layout/SlideArea/AngelHolder"]
+custom_minimum_size = Vector2(0, 118)
 layout_mode = 2
+
+[node name="AngelBadge" type="Panel" parent="Root/Panel/Layout/SlideArea/AngelHolder/PresenterPivot"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 148.0
+offset_bottom = 96.0
+
+[node name="AngelMood" type="Label" parent="Root/Panel/Layout/SlideArea/AngelHolder/PresenterPivot/AngelBadge"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 6.0
+offset_right = -8.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_colors/font_color = Color(0.98, 0.72, 0.25, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 15
 text = "Angel"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="Narration" type="Label" parent="Root/Panel/Layout/SlideArea/AngelHolder"]
 layout_mode = 2
@@ -126,6 +150,28 @@ theme_override_colors/font_color = Color(0.93, 0.95, 1, 1)
 theme_override_font_sizes/font_size = 15
 text = ""
 autowrap_mode = 3
+
+[node name="ChatRow" type="HBoxContainer" parent="Root/Panel/Layout/SlideArea/AngelHolder"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AnswerEdit" type="LineEdit" parent="Root/Panel/Layout/SlideArea/AngelHolder/ChatRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+placeholder_text = "Type your answer or ask Angel... ('hint do', 'dobara samjhao')"
+
+[node name="SendButton" type="Button" parent="Root/Panel/Layout/SlideArea/AngelHolder/ChatRow"]
+custom_minimum_size = Vector2(74, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Send"
+
+[node name="ListenButton" type="Button" parent="Root/Panel/Layout/SlideArea/AngelHolder/ChatRow"]
+custom_minimum_size = Vector2(84, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Listen"
 
 [node name="Controls" type="HBoxContainer" parent="Root/Panel/Layout"]
 layout_mode = 2
@@ -163,3 +209,68 @@ custom_minimum_size = Vector2(84, 48)
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Next >"
+
+[node name="QuizPanel" type="VBoxContainer" parent="Root/Panel/Layout"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="QuestionLabel" type="Label" parent="Root/Panel/Layout/QuizPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "Question"
+autowrap_mode = 3
+
+[node name="ChoicesBox" type="VBoxContainer" parent="Root/Panel/Layout/QuizPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="QuizFeedback" type="Label" parent="Root/Panel/Layout/QuizPanel"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.6, 1)
+theme_override_font_sizes/font_size = 14
+text = ""
+autowrap_mode = 3
+
+[node name="ScorePanel" type="VBoxContainer" parent="Root/Panel/Layout"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ScoreTitle" type="Label" parent="Root/Panel/Layout/ScorePanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Understanding this attempt"
+horizontal_alignment = 1
+
+[node name="ScoreValue" type="Label" parent="Root/Panel/Layout/ScorePanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.72, 0.25, 1)
+theme_override_font_sizes/font_size = 40
+text = "0 / 100"
+horizontal_alignment = 1
+
+[node name="ScoreDetail" type="Label" parent="Root/Panel/Layout/ScorePanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.64, 0.78, 1)
+theme_override_font_sizes/font_size = 14
+text = ""
+horizontal_alignment = 1
+
+[node name="ScoreNext" type="Label" parent="Root/Panel/Layout/ScorePanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = ""
+autowrap_mode = 3
+horizontal_alignment = 1
+
+[node name="DoneButton" type="Button" parent="Root/Panel/Layout/ScorePanel"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Finish"

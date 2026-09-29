@@ -818,3 +818,106 @@ if FAILURES:
     for f in FAILURES:
         print("FAIL ->", f)
     sys.exit(1)
+
+# ============================================================
+# Phase 7 checks (voice, listening, scoring, persistence)
+# ============================================================
+def _p7(name, ok, detail=""):
+    check(name, ok, detail)
+
+
+for script in ["scripts/voice_manager.gd", "scripts/listen_manager.gd",
+               "scripts/understanding_scorer.gd", "scripts/angel_presenter.gd",
+               "tools/smoke_presentation.gd"]:
+    sp = ROOT / script
+    _p7(f"{script} exists", sp.exists())
+    if not sp.exists():
+        continue
+    s = sp.read_text(encoding="utf-8")
+    _p7(f"{script}: tab indentation", not [
+        ln for ln in s.splitlines()
+        if ln.startswith("    ") and not ln.lstrip().startswith("*")])
+    _p7(f"{script}: no network/API usage", not [
+        f for f in ["HTTPRequest", "http_request", "api_key", "API_KEY",
+                    "WebSocketPeer", "fetch("] if f in s])
+
+vm = (ROOT / "scripts/voice_manager.gd").read_text(encoding="utf-8")
+# Only the DisplayServer TTS methods verified against the real binary
+# (tools/dump_tts_api.gd) may be called.
+for verified in ["tts_speak", "tts_stop", "tts_is_speaking", "tts_get_voices",
+                 "FEATURE_TEXT_TO_SPEECH"]:
+    _p7(f"voice_manager: uses verified API {verified}", verified in vm)
+_p7("voice_manager: verified speak signature usage",
+    "tts_speak(text, voice_id" in vm)
+_p7("voice_manager: gentle pitch/rate defaults",
+    "DEFAULT_PITCH := 1.05" in vm and "DEFAULT_RATE := 0.95" in vm)
+_p7("voice_manager: text narration never blocked",
+    "available" in vm and "return" in vm.split("func speak")[1].split("func ")[0])
+
+lm = (ROOT / "scripts/listen_manager.gd").read_text(encoding="utf-8")
+_p7("listen_manager: ships text-only (no verified STT plugin)",
+    "available := false" in lm and "status_text" in lm)
+_p7("listen_manager: no audio recording APIs",
+    not [f for f in ["AudioEffectRecord", "AudioServer.capture",
+                     "RECORD_AUDIO", "Microphone"] if f in lm])
+
+us = (ROOT / "scripts/understanding_scorer.gd").read_text(encoding="utf-8")
+_p7("scorer: exact formula weights", "QUIZ_WEIGHT := 0.75" in us
+    and "PRACTICE_WEIGHT := 0.25" in us)
+_p7("scorer: uses round on weighted percent",
+    "round(" in us and "quiz_percent" in us and "practice_percent" in us)
+_p7("scorer: requires >=1 practice item (validation error)",
+    "practice_total < 1" in us and "push_error" in us)
+_p7("scorer: supportive next steps", "next_step" in us
+    and "understanding this attempt" in us.lower() or "this attempt" in us)
+
+ab = (ROOT / "scripts/angel_brain.gd").read_text(encoding="utf-8")
+_p7("brain: checkpoint answer matcher", "func check_checkpoint_answer" in ab)
+_p7("brain: normalizes punctuation/case", "func _normalize_answer" in ab
+    and "to_lower" in ab)
+_p7("brain: accepted_answers matching", "_answer_matches" in ab
+    and "accepted_answers" in ab)
+
+lp = (ROOT / "scripts/learning_progress.gd").read_text(encoding="utf-8")
+_p7("progress: record_understanding API", "func record_understanding" in lp)
+_p7("progress: persists latest/best + components + timestamp",
+    all(f in lp for f in ["latest_understanding", "best_understanding",
+        "last_understanding_quiz_percent", "last_understanding_practice_percent",
+        "last_understanding_ms"]))
+_p7("progress: clamp-safe migration for new fields",
+    lp.count("clampi(int(entry.get(") >= 5)
+_p7("progress: full default entry (first-attempt fix)",
+    '"first_completion_rewarded": false,' in lp
+    and '"mastery_rewarded": false,' in lp
+    and '"latest_understanding": 0,' in lp)
+_p7("progress: schema version unchanged (v2)", "SCHEMA_VERSION := 2" in lp)
+_p7("progress: record_attempt unchanged (idempotent rewards)",
+    "first_completion_rewarded\"] = true" in lp
+    and "mastery_rewarded\"]" in lp)
+
+pr = (ROOT / "scripts/lesson_presentation.gd").read_text(encoding="utf-8")
+_p7("presentation: wires VoiceManager with text fallback",
+    "VoiceManager.new()" in pr and "voice_enabled = _voice.available" in pr)
+_p7("presentation: wires ListenManager fallback message",
+    "ListenManager.new()" in pr and "_listen.status_text()" in pr)
+_p7("presentation: wires AngelPresenter (pivot transforms only)",
+    "AngelPresenter.new()" in pr and "_presenter.attach(_pivot)" in pr
+    and "set_mood" in pr)
+_p7("presentation: quiz expects exactly 3 questions",
+    "_quiz_data.size() != 3" in pr)
+_p7("presentation: first answers only counted",
+    "_quiz_answered_first" in pr and "_practice_awaiting_selfcheck" in pr)
+_p7("presentation: score shown as this-attempt estimate",
+    "Understanding this attempt" in pr or "understanding this attempt" in pr.lower())
+_p7("presentation: persists via record_attempt + record_understanding",
+    "record_attempt(topic_id, _quiz_correct)" in pr
+    and "record_understanding(topic_id" in pr)
+_p7("presentation: validation errors surfaced, not silent",
+    pr.count("push_error") >= 4 and 'result["ok"]' in pr)
+
+print()
+print(f"TOTAL: {len(CHECKS)} checks, {len(FAILURES)} failed")
+if FAILURES:
+    for f in FAILURES:
+        print("FAIL ->", f)
+    sys.exit(1)

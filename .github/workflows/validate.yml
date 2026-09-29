@@ -52,3 +52,6 @@ jobs:
 
       - name: Load and instantiate every scene with real Godot
         run: /tmp/Godot_v4.7.2-stable_linux.x86_64 --headless --path . --script tools/load_all_scenes.gd
+
+      - name: Runtime smoke test (presentation flow, scoring, persistence)
+        run: /tmp/Godot_v4.7.2-stable_linux.x86_64 --headless --path . --script tools/smoke_presentation.gd
